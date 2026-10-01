@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Espelho de ponto</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <!-- Só UM script, como module (necessário por causa do import) -->
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <div id="menu-container"></div>
+
+  <div class="wrap">
+    <header>
+      <h1>Espelho de ponto</h1>
+    </header>
+
+    <form class="filters" id="filterForm">
+
+      <!-- NOVO: filtro de colaborador -->
+      <div class="field">
+        <label for="colaborador">Colaborador</label>
+        <select id="colaborador" name="colaborador">
+          <option value="">Todos</option>
+          <!-- as opções são criadas pelo JS -->
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="dataInicio">De</label>
+        <input type="date" id="dataInicio" name="dataInicio">
+      </div>
+      <div class="field">
+        <label for="dataFim">Até</label>
+        <input type="date" id="dataFim" name="dataFim">
+      </div>
+      <button type="submit" class="apply">Filtrar</button>
+    </form>
+
+    <div class="table-panel">
+      <table class="table-width">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Entrada</th>
+            <th>Saída almoço</th>
+            <th>Retorno almoço</th>
+            <th>Saída</th>
+            <th>Horas trabalhadas</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+        <tfoot>
+          <tr>
+            <td class="total-label" data-label="">Total do período</td>
+            <td data-label=""></td>
+            <td data-label=""></td>
+            <td data-label=""></td>
+            <td data-label=""></td>
+            <td class="total-value" id="tfootTotal" data-label="Total">00:00</td>
+            <td data-label=""></td> <!-- célula que faltava (coluna Ações) -->
+          </tr>
+        </tfoot>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        Nenhum lançamento encontrado para o período selecionado.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

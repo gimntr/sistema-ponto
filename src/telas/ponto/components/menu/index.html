@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persistent drawer</title>
+</head>
+
+<body>
+
+    <header id="app-bar">
+        <button id="btn-abrir-menu" aria-label="abrir menu">☰</button>
+    </header>
+    <!-- Conteúdo do components.html -->
+    <nav class="meu-menu-lateral">
+        <ul>
+            <li><a href="../registro-ponto/registro-ponto.html">Registrar Ponto</a></li>
+            <li><a href="../espelho-ponto/espelho-ponto.html">Espelho de Ponto</a></li>
+            <li><a href="../ajuste-ponto/ajuste-ponto.html">Ajuste de Ponto</a></li>
+        </ul>
+    </nav>
+    <nav id="menu-lateral">
+        <div id="cabecalho-menu">
+            <strong>Menu</strong>
+            <button id="btn-fechar-menu" aria-label="fechar menu">←</button>
+        </div>
+        <hr>
+        <ul>
+            <div id="menu-container"></div>
+            <li><a href="#">Inbox</a></li>
+            <li><a href="#">Starred</a></li>
+            <li><a href="#">Send email</a></li>
+            <li><a href="#">Drafts</a></li>
+        </ul>
+    </nav>
+
+    <main id="conteudo-principal">
+        <div id="espaco-topo"></div>
+        <p>Conteúdo da página aqui.</p>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,195 @@
+ :root {
+     --bg: #faf9f7;
+     /* cor de fundo da página */
+     --card: #ffffff;
+     /* cor do "cartão" branco do formulário */
+     --ink: #2a2a2a;
+     /* cor principal do texto */
+     --ink-soft: #6f6f6f;
+     /* cor de texto secundário (subtítulos) */
+     --line: #e2e0db;
+     /* cor das bordas/linhas discretas */
+     --accent: #6b2737;
+     /* cor de destaque (hover do botão, links) */
+     --error: #8a2432;
+     /* vermelho usado em mensagens de erro */
+     --ok: #3f6e52;
+     /* verde usado quando um campo está válido */
+     --radius: 4px;
+     /* raio de borda padrão, reaproveitado em vários elementos */
+ }
+
+ /* box-sizing: border-box faz com que padding e border entrem
+       DENTRO da largura/altura declaradas, em vez de somar a elas.
+       Sem isso, inputs com padding "estouram" o layout facilmente. */
+ * {
+     box-sizing: border-box;
+ }
+
+ body {
+     margin: 0;
+     min-height: 100vh;
+     background: var(--bg);
+     color: var(--ink);
+     font-family: 'Segoe UI', Arial, sans-serif;
+
+     /* Flexbox centralizando tudo na tela (horizontal e vertical) */
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     padding: 24px;
+
+     text-align: center;
+     /* mantive o text-align que já tinha */
+ }
+
+ /* Container geral: limita a largura máxima do formulário para
+       não ficar esticado demais em telas grandes */
+ .wrap {
+     width: 100%;
+     max-width: 400px;
+ }
+
+ .brand-mark {
+     margin-bottom: 8px;
+ }
+
+ .brand-mark img {
+     width: 350px;
+     height: auto;
+ }
+
+ /* "Cartão" branco onde fica o formulário */
+
+ /* fixei um tamanho em px 
+      height: auto;
+       /* "Cartão" branco onde fica o formulário */
+
+ .card {
+     border: 1px solid var(--line);
+     color: var(--ink-soft);
+     border-radius: var(--radius);
+     padding: 15px 28px; /* espaço entre a borda do formulário e o conteúdo dentro dele.*/
+     text-align: left;
+     /* dentro do card, texto alinhado à esquerda
+                            fica mais legível que centralizado */
+ }
+
+ h2 {
+     margin: 0 0 10px;
+     text-align: center;
+ }
+
+ .subtitle {
+     margin: 0 0 24px;
+     color: var (--ink-+soft);
+     font-size: 0.95rem;
+     text-align: center;
+ }
+
+ /*espaçamento entre cada bloco de campo (label + input) */
+ .field {
+     margin-bottom: 5px;
+ }
+
+ .field label {
+     display: block;
+     /* label ocupa a própria linha, acima do input */
+     margin-bottom: 6px;
+     font-size: 0.9rem;
+ }
+
+ /* .input-shell é o "involucro" do input. Uso essa div ao redor do <input> para poder colocar o botão de mostrar/ ocultar senha DENTRO da mesma caixa visual (comop se fizesse parte do campo).
+        */
+ .input-shell {
+     display: flex;
+     align-items: center;
+     border: 1px solid var (--line);
+     border-radius: var(--radius);
+     background: #fff;
+     transition: border-color .15s ease, box-shadow .15s ease;
+ }
+
+ /* :focus-within = estiliza o input-shell quando QUALQUER filho dele (o <input>) está em foco. Sem isso, o destaque de foco só apareceria do próprio input, não na "caixa toda" 
+              */
+ .input-shell:focus-within {
+     border-color: #9b9b9b;
+     box-shadow: 0 0 0 3px rgba(155, 155, 155, 0.15);
+ }
+
+ /* Quando adicionamos a classe "error" via JS no .field pai, a borda do input-shell dentro dele fica vermelha */
+ .field.error .input-shell {
+     border-color: var (--error);
+ }
+
+ .field.valid .input-shell {
+     border-color: var (--ok);
+ }
+
+ input {
+     flex: 1;
+     /* faz o input ocupar todo o espaço disponível dentro do input-shell */
+
+     min-width: 0;
+     /* corrige bug de flexbox onde inputs não encolhem */
+     border: none;
+     /* removemos a borda do input porque quem desenha a borda agora é o .input-shell */
+
+     outline: none;
+     background: transparent;
+     font-size: 1rem;
+     padding: 11px 12px;
+     color: var(--ink);
+     font-family: inherit;
+ }
+
+ /*botão de olho (mostrar/ocultar senha) */
+ .toggle-pass {
+     border: none;
+     background: transparent;
+     cursor: pointer;
+     padding: 0 12px;
+     color: var(--ink-soft);
+     /* sem espaço entre var e ( */
+     display: flex;
+     align-items: center;
+ }
+
+ .toggle-pass:hover {
+     color: var(--ink);
+ }
+
+ /* Texto pequeno de erro/ajuda, embaixo de cada campo */
+ .hint {
+     min-height: 16px;
+     /* reserva espaço mesmo vazio, pra tela não "pular" quando o texto de erro aparece */
+
+     font-size: 0.8rem;
+     margin-top: 5px;
+     color: var(--error);
+ }
+
+ /* Aviso de "Caps Lock ativado" */
+ .caps-note {
+     font-size: 0.78rem;
+     color: rgba(248, 5, 5, 0.863);
+     margin: -20px 0 30px;
+     display: none;
+     /* Fica escondido até o JS mostrar*/
+ }
+
+ .caps-note.show {
+     display: block;
+ }
+
+ button[type="submit"] {
+     width: 100%;
+     padding: 12px;
+     background: var(--ink);
+     color: #fff;
+     border: none;
+     border-radius: var (--radius);
+     font-size: 1rem;
+     font-weight: 600;
+     transition: background .15s ease;
+ }

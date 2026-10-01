@@ -1,0 +1,239 @@
+/* =====================================================
+   VARIÁVEIS DE COR
+   Ficam num só lugar. Para mudar o visual do site todo,
+   basta trocar os valores aqui.
+   Uso: var(--nome) em qualquer lugar do CSS.
+   ===================================================== */
+:root {
+  --bg: #eef1f6;            /* cor de fundo da página */
+  --card: #ffffff;          /* cor do cartão central */
+  --text: #1c2333;          /* cor do texto principal */
+  --muted: #6b7489;         /* cor de textos secundários */
+  --primary: #151a51;       /* cor principal, usada no botão */
+  --primary-dark: #2458c4;  /* usado quando passa o mouse */
+  --display-bg: #ffffff;   /* fundo da caixa do relógio */
+  --display-text: #151a51;  /* cor dos números do relógio */
+  --border: #e2e6ef;        /* cor das linhas divisórias */
+}
+
+:root {
+  /* ...suas outras variáveis... */
+  --espaco-relogio-botao: 30px;  /* <- mexa só neste valor */
+}
+
+/* =====================================================
+   RESET
+   O asterisco (*) pega TODOS os elementos da página.
+   Tira as margens e espaçamentos que o navegador coloca
+   por padrão, para você controlar tudo do zero.
+   ===================================================== */
+* {
+  box-sizing: border-box; /* padding e borda contam dentro da largura do elemento,
+                             evitando que ele "estoure" o tamanho definido */
+  margin: 0;              /* remove margens externas padrão */
+  padding: 0;             /* remove espaçamentos internos padrão */
+}
+
+/* =====================================================
+   CORPO DA PÁGINA
+   ===================================================== */
+body {
+  min-height: 100vh;          /* altura mínima = 100% da altura da tela */
+  display: flex;              /* ativa o modo flexbox para alinhar o conteúdo */
+  justify-content: center;    /* centraliza o cartão na horizontal */
+  align-items: center;        /* centraliza o cartão na vertical */
+  padding: 24px 16px;         /* 24px em cima/embaixo, 16px nas laterais */
+  background: var(--bg);      /* usa a cor de fundo definida nas variáveis */
+  color: var(--text);         /* cor padrão dos textos */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+                              /* usa a fonte do próprio sistema (Windows, Mac,
+                                 Android...). Se uma não existir, tenta a próxima */
+}
+
+/* =====================================================
+   CARTÃO CENTRAL (.device)
+   É a caixa branca que envolve todo o conteúdo.
+   ===================================================== */
+.device {
+  width: 100%;                /* ocupa toda a largura disponível... */
+  max-width: 420px;           /* ...mas nunca passa de 420px */
+  padding: 24px;              /* espaço entre a borda do cartão e o conteúdo */
+  background: var(--card);    /* fundo branco */
+  border-radius: 20px;        /* cantos arredondados */
+  box-shadow: 0 10px 30px rgba(28, 35, 51, 0.12);
+                              /* sombra suave: 0 na horizontal, 10px para baixo,
+                                 30px de desfoque, cor escura com 12% de opacidade */
+  display: flex;              /* flexbox para organizar os itens internos */
+  flex-direction: column;     /* empilha os itens um embaixo do outro */
+  gap: 10px;                  /* espaço de 20px entre cada item */
+}
+
+/* Título pequeno no topo ("Registro de ponto") */
+.device__label {
+  font-size: 0.8rem;          /* texto pequeno */
+  font-weight: 600;           /* meio negrito */
+  letter-spacing: 0.08em;     /* espaço entre as letras */
+  text-transform: uppercase;  /* deixa tudo em MAIÚSCULAS */
+  color: var(--muted);        /* cinza */
+  text-align: center;         /* centralizado */
+}
+
+/* =====================================================
+   RELÓGIO
+   ===================================================== */
+
+/* Caixa escura que envolve o relógio e a data */
+.display {
+  padding: 5px 20px 15px;    /* espaço interno: topo 5, laterais 20, base 26 */
+  background: var(--display-bg);  /* fundo escuro */
+  color: var(--display-text);     /* texto claro */
+  border-radius: 16px;        /* cantos arredondados */
+  text-align: center;         /* centraliza os textos */
+}
+
+/* Os números do relógio (00:00:00) */
+.clock {
+  font-size: clamp(2.4rem, 12vw, 3.4rem);
+                              /* tamanho flexível: mínimo 2.4rem, máximo 3.4rem,
+                                 e no meio acompanha a largura da tela (12vw) */
+  font-weight: 700;           /* negrito */
+  font-variant-numeric: tabular-nums;
+                              /* todos os dígitos com a mesma largura, assim o
+                                 relógio não "balança" quando os números mudam */
+  letter-spacing: 0.04em;     /* um pouquinho de espaço entre os números */
+}
+
+/* Os dois pontos ":" entre horas, minutos e segundos */
+.colon {
+  opacity: 0.6;               /* deixa meio transparente (60% visível) */
+  margin: 0 2px;              /* 2px de espaço nos lados */
+}
+
+/* A data embaixo do relógio */
+.date {
+  margin-top: 10px;           /* afasta 10px do relógio */
+  font-size: 0.95rem;         /* tamanho um pouco menor que o normal */
+  color: #aab3cc;             /* cinza azulado claro */
+  text-transform: capitalize; /* primeira letra de cada palavra em maiúscula */
+}
+
+/* =====================================================
+   BOTÃO E MENSAGEM DE STATUS
+   ===================================================== */
+
+/* Área que agrupa o botão e a mensagem abaixo dele */
+.actions {
+  display: flex;
+  flex-direction: column;     /* botão em cima, mensagem embaixo */
+  gap: 10px;                  /* 10px entre eles */
+}
+  .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: calc(var(--espaco-relogio-botao) - 20px);
+}
+
+/* O botão "Registrar ponto" */
+.punch {
+  width: 100%;                /* ocupa toda a largura do cartão */
+  padding: 16px;              /* deixa o botão alto e confortável de clicar */
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;                /* texto branco */
+  background: var(--primary); /* fundo azul */
+  border: none;               /* remove a borda padrão do botão */
+  border-radius: 12px;        /* cantos arredondados */
+  cursor: pointer;            /* mostra a "mãozinha" ao passar o mouse */
+  transition: background 0.2s, transform 0.1s;
+                              /* muda de cor e tamanho de forma suave,
+                                 em vez de pular de uma vez */
+}
+
+/* Quando o mouse está em cima do botão */
+.punch:hover {
+  background: var(--primary-dark);  /* azul mais escuro */
+}
+
+/* Enquanto o botão está sendo clicado/pressionado */
+.punch:active {
+  transform: scale(0.98);     /* encolhe 2%, dá sensação de "apertar" */
+}
+
+/* Quando o botão é selecionado pelo teclado (Tab).
+   Ajuda quem navega sem mouse a ver onde está. */
+.punch:focus-visible {
+  outline: 3px solid rgba(47, 111, 237, 0.4);  /* contorno azul transparente */
+  outline-offset: 2px;        /* afasta o contorno 2px do botão */
+}
+
+/* Mensagem abaixo do botão (ex: "Entrada registrada às 08:00:00") */
+.status {
+  min-height: 1.2em;          /* reserva espaço mesmo vazia, para a tela
+                                 não "pular" quando a mensagem aparece */
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* =====================================================
+   LISTA DE REGISTROS
+   ===================================================== */
+
+/* Seção dos registros, separada do resto por uma linha em cima */
+.log {
+  border-top: 1px solid var(--border);  /* linha fina cinza */
+  padding-top: 16px;                    /* espaço entre a linha e o título */
+}
+
+/* Título "Últimos registros" */
+.log__title {
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;  /* MAIÚSCULAS */
+  letter-spacing: 0.05em;
+}
+
+/* Texto "Nenhum registro ainda hoje." */
+.log__empty {
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 12px 0;            /* espaço em cima e embaixo */
+}
+
+/* A lista (<ul>) onde aparecem os registros */
+.log__list {
+  list-style: none;           /* remove as bolinhas da lista */
+  display: flex;
+  flex-direction: column;     /* um registro embaixo do outro */
+  gap: 8px;                   /* 8px entre cada registro */
+}
+
+/* Cada registro da lista (<li>), ex: "Entrada   08:00:00" */
+.log__list li {
+  display: flex;
+  justify-content: space-between;  /* tipo à esquerda, hora à direita */
+  padding: 10px 14px;
+  background: var(--bg);      /* fundo cinza claro */
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;  /* dígitos alinhados */
+}
+
+/* =====================================================
+   TELAS PEQUENAS (celulares estreitos)
+   Este bloco só vale quando a tela tem 360px de largura
+   ou menos. Reduz os espaçamentos para caber melhor.
+   ===================================================== */
+@media (max-width: 360px) {
+  .device {
+    padding: 1px;            /* cartão com menos espaço interno */
+  }
+
+  .display {
+    padding: 24px 14px 20px;  /* caixa do relógio mais compacta */
+  }
+}

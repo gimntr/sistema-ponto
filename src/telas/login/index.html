@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- Diz ao navegador que este é um documento HTML5 -->
+<html lang="pt-BR">
+<!-- lang="pt-BR": idioma da página. Ajuda leitores de tela e tradutores -->
+
+<head>
+  <!-- O <head> guarda configurações da página. Nada aqui aparece na tela, exceto o título na aba -->
+
+  <meta charset="UTF-8">
+  <!-- Codificação de caracteres. Sem isso, acentos como "usuário" podem aparecer quebrados -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Faz a página se ajustar à largura do celular, em vez de aparecer minúscula.
+       viewport-fit=cover permite usar a tela toda em celulares com notch -->
+
+  <link rel="stylesheet" href="style.css">
+  <!-- Liga este HTML ao arquivo de estilos (cores, tamanhos, espaçamentos) -->
+
+  <script src="script.js" defer></script>
+  <!-- Liga o arquivo de JavaScript (comportamento: mostrar/ocultar senha, validação...).
+       "defer" faz o script só rodar depois que o HTML terminou de carregar -->
+
+  <title>Acesso ao Sistema</title>
+  <!-- Texto que aparece na aba do navegador -->
+</head>
+
+<body>
+  <!-- O <body> guarda tudo o que aparece na tela -->
+
+  <div class="wrap">
+
+    <div class="brand-mark">
+      <img src="../../assets/logo.png" alt="Logo">
+    </div>
+
+    <h2 class="page-title">CONTROLE DE HORAS</h2>
+
+    <div class="card">
+
+      <form id="loginForm">
+        <!-- Formulário. O id="loginForm" serve para o JavaScript encontrá-lo
+             e, por exemplo, validar os campos quando clicarem em "Entrar" -->
+
+        <div class="field">
+          <!-- Bloco de um campo: rótulo + caixa + mensagem de erro.
+               O JS pode adicionar as classes "error" ou "valid" aqui
+               para deixar a borda vermelha ou verde -->
+
+          <label for="usuario">Nome de usuário</label>
+          <!-- Rótulo do campo. O for="usuario" liga o texto ao input de id="usuario":
+               clicar no rótulo já coloca o cursor no campo -->
+
+          <div class="input-shell">
+            <!-- "Envoltório" do input. É ele que desenha a borda e o efeito de foco.
+                 Serve para o botão do olho poder ficar DENTRO da mesma caixa (no campo de senha) -->
+
+            <input type="text" id="usuario" placeholder="Informe seu usuário">
+            <!-- Campo de texto.
+                 type="text": aceita texto normal
+                 id="usuario": identificador usado pelo label e pelo JS
+                 placeholder: texto cinza de exemplo que some ao digitar -->
+          </div>
+
+          <div class="hint"></div>
+          <!-- Espaço reservado para mensagem de erro/ajuda (ex.: "Informe o usuário").
+               Fica vazio até o JS preencher; o CSS reserva altura para a tela não "pular" -->
+        </div>
+
+        <div class="field">
+          <!-- Bloco do campo de senha, mesma estrutura do anterior -->
+
+          <label for="senha">Senha</label>
+
+          <div class="input-shell">
+            <input type="password" id="senha" placeholder="Digite sua senha">
+            <!-- type="password": esconde o que é digitado (bolinhas).
+                 O JS troca para type="text" quando clicam no olho -->
+
+            <button type="button" class="toggle-pass" id="togglePass" aria-label="Mostrar senha">
+              <!-- Botão do olho.
+                   type="button": IMPORTANTE, evita que ele envie o formulário ao ser clicado
+                   id="togglePass": o JS usa para detectar o clique
+                   aria-label: descrição para leitores de tela, já que o botão só tem um ícone -->
+
+              <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Ícone desenhado em SVG (imagem vetorial, nunca fica borrada).
+                     width/height: tamanho de 20px
+                     viewBox: sistema de coordenadas interno do desenho
+                     fill="none": sem preenchimento, só contorno
+                     stroke="currentColor": o traço usa a cor do texto do botão,
+                     assim o CSS controla a cor (cinza, escurece no hover) -->
+
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <!-- Contorno do olho (formato de amêndoa) -->
+
+                <circle cx="12" cy="12" r="3"/>
+                <!-- Pupila: círculo de raio 3 no centro do desenho -->
+              </svg>
+            </button>
+          </div>
+
+          <div class="hint"></div>
+          <!-- Mensagem de erro do campo de senha -->
+        </div>
+
+        <button type="submit">Entrar</button>
+        <!-- Botão principal. type="submit" envia o formulário ao clicar (ou ao apertar Enter).
+             O CSS estiliza pelo seletor button[type="submit"] -->
+      </form>
+    </div>
+
+  </div>
+</body>
+
+</html>

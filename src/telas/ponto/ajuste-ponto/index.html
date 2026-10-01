@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+
+<body>
+  <!-- Container principal: centraliza e limita a largura do conteúdo (definido no CSS pela classe "wrap") -->
+  <div class="wrap">
+
+    <!-- Cabeçalho da página com o título -->
+    <header>
+      <h1>Espelho de ponto</h1>
+    </header>
+
+    <!-- Formulário de filtros: o usuário escolhe colaborador e período.
+         O id "filterForm" permite que o JavaScript capture o evento de envio (submit) -->
+    <form class="filters" id="filterForm">
+
+      <!-- Campo 1: seleção do colaborador -->
+      <div class="field">
+        <label for="colaborador">Colaborador</label>
+        <!-- O <select> começa só com "Selecione". As demais opções
+              serão adicionadas pelo JavaScript -->
+        <select id="colaborador" name="colaborador">
+          <option>Selecione</option>
+        </select>
+      </div>
+
+      <!-- Campo 2: data inicial do período -->
+      <div class="field">
+        <label for="mesInicio">De</label>
+        <input type="date" id="dataInicio" name="dataInicio">
+      </div>
+
+      <!-- Campo 3: data final do período -->
+      <div class="field">
+        <label for="dataFim">Até</label>
+        <input type="date" id="dataFim" name="dataFim">
+      </div>
+
+      <!-- Botão que envia o formulário (dispara o evento "submit" para o JS filtrar os dados) -->
+      <button type="submit" class="apply">Filtrar</button>
+    </form>
+
+    <!-- Painel que contém a tabela de registros de ponto -->
+    <div class="table-panel">
+      <table class="table-width">
+
+        <!-- Cabeçalho da tabela: nomes das colunas -->
+        <thead>
+          <tr>
+            <th>Colaborador</th>
+            <th>Data</th>
+            <th>Entrada</th>
+            <th>Saída intervalo</th>
+            <th>Retorno intervalo</th>
+            <th>Saída</th>
+            <th>Horas trabalhadas</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <!-- Corpo da tabela: começa vazio. O JavaScript vai criar as linhas
+             (<tr>) aqui dentro usando o id "tableBody" -->
+        <tbody id="tableBody"></tbody>
+
+        <!-- Rodapé da tabela: mostra o total de horas do período -->
+        <tfoot>
+          <tr>
+            <!-- Rótulo "Total do período" na primeira coluna -->
+            <td class="total-label" data-label="">Total do período</td>
+            <!-- Células vazias para alinhar com as colunas Data, Entrada,
+                 Saída intervalo e Retorno intervalo -->
+            <td 
+          <script type="module" src="script.js"></script>
+          </body>

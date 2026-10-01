@@ -1,0 +1,11 @@
+    .table-width {
+        width: 100%;
+    }
+
+    .table-width td {
+        text-align: center;
+    }
+
+    .id-registro {
+        display: none;
+    }

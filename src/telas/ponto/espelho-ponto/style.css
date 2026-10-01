@@ -1,0 +1,322 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap");
+
+/* ===== TOKENS ===== */
+:root {
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --ink: #1b2733;
+  --muted: #5e6b78;
+  --line: #d9dfe5;
+  --row-hover: #f5f8fa;
+  --accent: #0e6a72;
+  --accent-hover: #0a545b;
+  --accent-soft: #dff0f1;
+  --focus: #1f6feb;
+
+  --radius: 8px;
+  --font: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ===== LAYOUT ===== */
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 24px 56px;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ===== FILTROS ===== */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field:first-child {
+  flex: 1 1 220px;
+}
+
+label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+select,
+input[type="date"] {
+  height: 40px;
+  padding: 0 12px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+select:hover,
+input[type="date"]:hover {
+  border-color: #b4bec8;
+}
+
+.apply {
+  height: 40px;
+  padding: 0 24px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.apply:hover {
+  background: var(--accent-hover);
+}
+
+select:focus-visible,
+input:focus-visible,
+.apply:focus-visible,
+.acoes .material-symbols-outlined:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ===== TABELA ===== */
+.table-panel {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.table-width {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-width td {
+  text-align: center;
+}
+
+th {
+  padding: 14px 16px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: center;
+  background: #f7f9fb;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover {
+  background: var(--row-hover);
+}
+
+/* números alinhados em colunas */
+td.date,
+td.time,
+td.total {
+  font-variant-numeric: tabular-nums;
+}
+
+td.date {
+  font-weight: 600;
+}
+
+td.time {
+  color: var(--ink);
+}
+
+td.total {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ===== AÇÕES ===== */
+.acoes .material-symbols-outlined {
+  padding: 6px;
+  font-size: 20px;
+  color: var(--muted);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.acoes .material-symbols-outlined:hover {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* ===== RODAPÉ: TOTAL DO PERÍODO ===== */
+tfoot td {
+  padding: 18px 16px;
+  color: #fff;
+  background: var(--ink);
+  border-bottom: 0;
+}
+
+tfoot .total-label {
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+tfoot .total-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== ESTADO VAZIO ===== */
+.empty-state {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ===== CELULAR: cada dia vira um cartão ===== */
+@media (max-width: 720px) {
+  .wrap {
+    padding: 20px 16px 40px;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .field:first-child {
+    flex: none;
+  }
+
+  .apply {
+    width: 100%;
+  }
+
+  .table-panel {
+    overflow: visible;
+    background: transparent;
+    border: 0;
+  }
+
+  .table-width,
+  .table-width tbody,
+  .table-width tfoot,
+  .table-width tr,
+  .table-width td {
+    display: block;
+  }
+
+  .table-width thead {
+    display: none;
+  }
+
+  .table-width tbody tr {
+    margin-bottom: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .table-width td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    text-align: right;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .table-width td::before {
+    content: attr(data-label);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: left;
+  }
+
+  .table-width td.date {
+    background: #f7f9fb;
+  }
+
+  .table-width td.acoes {
+    justify-content: flex-end;
+    border-bottom: 0;
+  }
+
+  .table-width td.acoes::before {
+    display: none;
+  }
+
+  /* rodapé: só o rótulo e o total */
+  .table-width tfoot tr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--ink);
+    border-radius: var(--radius);
+  }
+
+  .table-width tfoot td {
+    display: block;
+    padding: 0;
+    background: none;
+  }
+
+  .table-width tfoot td::before {
+    display: none;
+  }
+
+  .table-width tfoot td[data-label=""]:not(.total-label):not(.total-value) {
+    display: none;
+  }
+}

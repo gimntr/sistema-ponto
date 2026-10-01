@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- Codificação de caracteres; garante que acentos (ç, ã, é) apareçam certo -->
+  <meta charset="UTF-8">
+
+  <!-- Deixa a página responsiva no celular:
+       width=device-width: usa a largura real da tela
+       initial-scale=1: sem zoom inicial
+       viewport-fit=cover: ocupa a tela toda em celulares com notch/recorte -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- Título que aparece na aba do navegador -->
+  <title>Registro de ponto</title>
+
+  <!-- Carrega o arquivo de estilos (cores, layout, fontes) -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Carrega o JavaScript (o código do relógio e do registro de ponto).
+       "defer" faz o script só rodar depois que o HTML inteiro foi lido,
+       por isso os getElementById do script encontram os elementos abaixo -->
+  <script src="registro-ponto.js" defer></script>
+</head>
+
+<body>
+  <!-- Container principal, estilizado como um "aparelho" de ponto (classe device) -->
+  <main class="device">
+    <!-- Título/rótulo no topo do aparelho -->
+    <p class="device__label">Registro de ponto</p>
+
+    <!-- Espaço vazio reservado para um menu. Algum script (provavelmente
+         outro arquivo) deve injetar o conteúdo aqui; só com este HTML
+         ele fica vazio -->
+    <div id="menu-container"></div>
+
+    <!-- "Visor" do aparelho: relógio e data -->
+    <div class="display">
+      <!-- Relógio. O JS (updateClock) troca este conteúdo a cada segundo.
+           O "00:00:00" é só o valor inicial, antes do JS carregar.
+           aria-live="off": leitores de tela NÃO anunciam cada segundo que passa.
+           Os <span class="colon"> permitem estilizar os dois-pontos no CSS -->
+      <div class="clock" id="clock" aria-live="off">00<span class="colon">:</span>00<span class="colon">:</span>00</div>
+
+      <!-- Data por extenso. O JS substitui o texto "carregando data…" -->
+      <div class="date" id="date">carregando data…</div>
+    </div>
+
+    <!-- Área do botão de ação -->
+    <div class="actions">
+      <!-- Botão que o JS escuta (punchBtn) para registrar entrada/saída.
+           type="button" evita que ele se comporte como envio de formulário -->
+      <button class="punch" id="punchBtn" type="button">Registrar ponto</button>
+
+      <!-- Mensagem de confirmação, ex: "Entrada registrada às 08:02:15".
+           Começa vazia e o JS preenche após o clique.
+           role="status" + aria-live="polite": leitores de tela anunciam
+           a mensagem quando ela mudar, sem interromper o que estão lendo -->
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </div>
+
+    <!-- Seção com o histórico de registros do dia -->
+    <section class="log">
+      <p class="log__title">Últimos registros</p>
+
+      <!-- Aviso exibido quando não há registros; o JS o esconde (hidden)
+           assim que existir pelo menos um -->
+      <p class="log__empty" id="empty">Nenhum registro ainda hoje.</p>
+
+      <!-- Lista onde o JS insere um <li> para cada registro
+           (mais recente no topo). Começa vazia -->
+      <ul class="log__list" id="logList"></ul>
+    </section>
+  </main>
+  
+
+</body>
+</html>
