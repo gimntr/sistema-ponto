@@ -143,4 +143,3 @@ customElements.define("meu-menu", MeuMenu);
         //Executa a ação de filtrar a lista e carregar o resultado na tela através do innerHTML
         aplicarFiltros();
     });
-})();
