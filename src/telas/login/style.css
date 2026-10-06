@@ -1,195 +1,214 @@
- :root {
-     --bg: #faf9f7;
-     /* cor de fundo da página */
-     --card: #ffffff;
-     /* cor do "cartão" branco do formulário */
-     --ink: #2a2a2a;
-     /* cor principal do texto */
-     --ink-soft: #6f6f6f;
-     /* cor de texto secundário (subtítulos) */
-     --line: #e2e0db;
-     /* cor das bordas/linhas discretas */
-     --accent: #6b2737;
-     /* cor de destaque (hover do botão, links) */
-     --error: #8a2432;
-     /* vermelho usado em mensagens de erro */
-     --ok: #3f6e52;
-     /* verde usado quando um campo está válido */
-     --radius: 4px;
-     /* raio de borda padrão, reaproveitado em vários elementos */
- }
+:root {
+  --bg: #eef1f4;              /* fundo da página */
+  --surface: #ffffff;         /* fundo do cartão e dos campos */
+  --ink: #1b2733;             /* cor principal do texto */
+  --muted: #5e6b78;           /* texto secundário: rótulos, subtítulo, ícones */
+  --line: #d9dfe5;            /* bordas */
+  --accent: #151a51;          /* cor do botão (a mesma do botão "Filtrar") */
+  --accent-hover: #2458c4;    /* cor do botão ao passar o mouse */
+  --focus: #1f6feb;           /* contorno de foco (teclado) */
+  --error: #8a2432;           /* mensagens e bordas de erro */
+  --ok: #3f6e52;              /* borda de campo válido */
+  --radius: 8px;              /* arredondamento do cartão (igual ao painel da tabela) */
+  --radius-sm: 6px;           /* arredondamento de campos e botão (igual aos filtros) */
+  --font: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
 
- /* box-sizing: border-box faz com que padding e border entrem
-       DENTRO da largura/altura declaradas, em vez de somar a elas.
-       Sem isso, inputs com padding "estouram" o layout facilmente. */
- * {
-     box-sizing: border-box;
- }
+/* padding e borda passam a contar dentro da largura declarada */
+* {
+  box-sizing: border-box;
+}
 
- body {
-     margin: 0;
-     min-height: 100vh;
-     background: var(--bg);
-     color: var(--ink);
-     font-family: 'Segoe UI', Arial, sans-serif;
+/* Página: centraliza o login na tela (horizontal e vertical) */
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+}
 
-     /* Flexbox centralizando tudo na tela (horizontal e vertical) */
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     padding: 24px;
+/* Contêiner geral: limita a largura do formulário */
+.wrap {
+  width: 100%;
+  max-width: 400px;
+}
 
-     text-align: center;
-     /* mantive o text-align que já tinha */
- }
+/* Logo */
+.brand-mark {
+  margin-bottom: 8px;
+}
 
- /* Container geral: limita a largura máxima do formulário para
-       não ficar esticado demais em telas grandes */
- .wrap {
-     width: 100%;
-     max-width: 400px;
- }
+.brand-mark img {
+  width: 100%;                /* acompanha o contêiner (em vez de 350px fixos) */
+  max-width: 350px;           /* e nunca passa do tamanho original */
+  height: auto;
+}
 
- .brand-mark {
-     margin-bottom: 8px;
- }
+/* ===== CARTÃO DO FORMULÁRIO =====
+   Mesmo visual do painel da tabela: fundo branco, borda fina e
+   cantos de 8px. */
+.card {
+  padding: 24px 28px;         /* espaço entre a borda e o conteúdo */
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-align: left;           /* dentro do cartão, texto à esquerda é mais legível */
+}
 
- .brand-mark img {
-     width: 350px;
-     height: auto;
- }
+/* Título do cartão */
+h2 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
 
- /* "Cartão" branco onde fica o formulário */
+/* Subtítulo */
+.subtitle {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
 
- /* fixei um tamanho em px 
-      height: auto;
-       /* "Cartão" branco onde fica o formulário */
+/* ===== CAMPOS ===== */
 
- .card {
-     border: 1px solid var(--line);
-     color: var(--ink-soft);
-     border-radius: var(--radius);
-     padding: 15px 28px; /* espaço entre a borda do formulário e o conteúdo dentro dele.*/
-     text-align: left;
-     /* dentro do card, texto alinhado à esquerda
-                            fica mais legível que centralizado */
- }
+/* Espaço entre cada bloco (rótulo + campo) */
+.field {
+  margin-bottom: 8px;
+}
 
- h2 {
-     margin: 0 0 10px;
-     text-align: center;
- }
+/* Rótulos: mesmo estilo dos rótulos dos filtros */
+.field label {
+  display: block;             /* o rótulo ocupa a própria linha, acima do campo */
+  margin-bottom: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+}
 
- .subtitle {
-     margin: 0 0 24px;
-     color: var (--ink-+soft);
-     font-size: 0.95rem;
-     text-align: center;
- }
+/* .input-shell é a "caixa" que desenha a borda do campo.
+   Ela envolve o <input> e o botão de olho, para os dois parecerem
+   uma peça só. Mesma altura (40px) e borda dos campos da outra tela. */
+.input-shell {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
 
- /*espaçamento entre cada bloco de campo (label + input) */
- .field {
-     margin-bottom: 5px;
- }
+/* Borda um pouco mais escura ao passar o mouse (igual ao select/data) */
+.input-shell:hover {
+  border-color: #b4bec8;
+}
 
- .field label {
-     display: block;
-     /* label ocupa a própria linha, acima do input */
-     margin-bottom: 6px;
-     font-size: 0.9rem;
- }
+/* :focus-within = quando o <input> dentro da caixa está em foco, o
+   destaque aparece na caixa toda. Mesmo contorno azul da outra tela. */
+.input-shell:focus-within {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 2px var(--focus);
+}
 
- /* .input-shell é o "involucro" do input. Uso essa div ao redor do <input> para poder colocar o botão de mostrar/ ocultar senha DENTRO da mesma caixa visual (comop se fizesse parte do campo).
-        */
- .input-shell {
-     display: flex;
-     align-items: center;
-     border: 1px solid var (--line);
-     border-radius: var(--radius);
-     background: #fff;
-     transition: border-color .15s ease, box-shadow .15s ease;
- }
+/* Classes adicionadas pelo JavaScript no .field para validação */
+.field.error .input-shell {
+  border-color: var(--error);
+}
 
- /* :focus-within = estiliza o input-shell quando QUALQUER filho dele (o <input>) está em foco. Sem isso, o destaque de foco só apareceria do próprio input, não na "caixa toda" 
-              */
- .input-shell:focus-within {
-     border-color: #9b9b9b;
-     box-shadow: 0 0 0 3px rgba(155, 155, 155, 0.15);
- }
+.field.valid .input-shell {
+  border-color: var(--ok);
+}
 
- /* Quando adicionamos a classe "error" via JS no .field pai, a borda do input-shell dentro dele fica vermelha */
- .field.error .input-shell {
-     border-color: var (--error);
- }
+/* O <input> em si fica sem borda: quem desenha é o .input-shell */
+input {
+  flex: 1;                    /* ocupa todo o espaço livre da caixa */
+  min-width: 0;               /* corrige o bug do flexbox em que o input não encolhe */
+  height: 100%;
+  padding: 0 12px;
+  font: inherit;              /* herda a fonte da página */
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+}
 
- .field.valid .input-shell {
-     border-color: var (--ok);
- }
+/* Botão de olho (mostrar/ocultar senha) */
+.toggle-pass {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 12px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
 
- input {
-     flex: 1;
-     /* faz o input ocupar todo o espaço disponível dentro do input-shell */
+.toggle-pass:hover {
+  color: var(--accent);
+}
 
-     min-width: 0;
-     /* corrige bug de flexbox onde inputs não encolhem */
-     border: none;
-     /* removemos a borda do input porque quem desenha a borda agora é o .input-shell */
+/* Contorno de foco do botão de olho na navegação por teclado */
+.toggle-pass:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+  border-radius: var(--radius-sm);
+}
 
-     outline: none;
-     background: transparent;
-     font-size: 1rem;
-     padding: 11px 12px;
-     color: var(--ink);
-     font-family: inherit;
- }
+/* ===== MENSAGENS ===== */
 
- /*botão de olho (mostrar/ocultar senha) */
- .toggle-pass {
-     border: none;
-     background: transparent;
-     cursor: pointer;
-     padding: 0 12px;
-     color: var(--ink-soft);
-     /* sem espaço entre var e ( */
-     display: flex;
-     align-items: center;
- }
+/* Texto de erro/ajuda embaixo de cada campo */
+.hint {
+  min-height: 16px;           /* reserva espaço para a tela não "pular" quando o erro aparece */
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: var(--error);
+}
 
- .toggle-pass:hover {
-     color: var(--ink);
- }
+/* Aviso de "Caps Lock ativado": escondido até o JS adicionar .show */
+.caps-note {
+  display: none;
+  margin: -20px 0 30px;
+  font-size: 0.78rem;
+  color: var(--error);
+}
 
- /* Texto pequeno de erro/ajuda, embaixo de cada campo */
- .hint {
-     min-height: 16px;
-     /* reserva espaço mesmo vazio, pra tela não "pular" quando o texto de erro aparece */
+.caps-note.show {
+  display: block;
+}
 
-     font-size: 0.8rem;
-     margin-top: 5px;
-     color: var(--error);
- }
+/* ===== BOTÃO ENTRAR =====
+   Mesma cor, altura, raio e hover do botão "Filtrar". */
+button[type="submit"] {
+  width: 100%;
+  height: 40px;
+  padding: 0 24px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+}
 
- /* Aviso de "Caps Lock ativado" */
- .caps-note {
-     font-size: 0.78rem;
-     color: rgba(248, 5, 5, 0.863);
-     margin: -20px 0 30px;
-     display: none;
-     /* Fica escondido até o JS mostrar*/
- }
+button[type="submit"]:hover {
+  background: var(--accent-hover);
+}
 
- .caps-note.show {
-     display: block;
- }
-
- button[type="submit"] {
-     width: 100%;
-     padding: 12px;
-     background: var(--ink);
-     color: #fff;
-     border: none;
-     border-radius: var (--radius);
-     font-size: 1rem;
-     font-weight: 600;
-     transition: background .15s ease;
- }
+button[type="submit"]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}

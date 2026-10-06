@@ -1,19 +1,13 @@
 (function () {
 
-    // ===== DADOS =====
-    // Dados de exemplo. No projeto real virão de um backend/API.
-    // Cada item é um dia de trabalho com os 4 horários batidos.
     const registros = [
 
     { colaborador: 'Ana Souza', data: '2026-09-15', entrada: '08:02', saidaAlmoco: '12:00', retornoAlmoco: '13:01', saida: '17:58' },
     { colaborador: 'Ana Souza', data: '2026-09-16', entrada: '08:05', saidaAlmoco: '12:03', retornoAlmoco: '13:00', saida: '18:10' },
-
     { colaborador: 'Bruno Lima', data: '2026-09-15', entrada: '09:00', saidaAlmoco: '12:30', retornoAlmoco: '13:30', saida: '18:05' },
     { colaborador: 'Bruno Lima', data: '2026-09-16', entrada: '08:55', saidaAlmoco: '12:28', retornoAlmoco: '13:32', saida: '18:00' },
-
     { colaborador: 'Carla Mendes', data: '2026-09-15', entrada: '07:30', saidaAlmoco: '11:30', retornoAlmoco: '12:30', saida: '16:35' },
     { colaborador: 'Carla Mendes', data: '2026-09-16', entrada: '07:28', saidaAlmoco: '11:32', retornoAlmoco: '12:31', saida: '16:30' },
-
     { colaborador: 'Diego Ferreira', data: '2026-09-15', entrada: '08:15', saidaAlmoco: '12:10', retornoAlmoco: '13:10', saida: '17:20' },
     { colaborador: 'Diego Ferreira', data: '2026-09-19', entrada: '08:12', saidaAlmoco: '12:10', retornoAlmoco: '13:08', saida: '16:55' }
 ];
@@ -63,8 +57,11 @@
         // Pega o nome de cada registro. O Set remove os repetidos,
         // e o sort() coloca em ordem alfabética.
         const nomes = [...new Set(registros.map(r => r.colaborador))].sort();
+        console.trace("preencherColaboradores chamada");
+      
 
         nomes.forEach(nome => {
+              console.log(nome)
             const option = document.createElement('option'); // cria uma <option>
             option.value = nome;                             // valor usado no filtro
             option.textContent = nome;                       // texto que aparece na tela
@@ -140,6 +137,6 @@
     });
 
     // ===== AO ABRIR A PÁGINA =====
-    preencherColaboradores(); // NOVO: preenche o <select>
+    preencherColaboradores(); // preenche o <select>
     aplicarFiltros();         // mostra a tabela já na abertura
 })();

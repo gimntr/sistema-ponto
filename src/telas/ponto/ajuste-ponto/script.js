@@ -1,148 +1,298 @@
-customElements.define("meu-menu", MeuMenu);
+/* =====================================================================
+   ESPELHO DE PONTO: script.js
+   O que este arquivo faz:
+     1. Guarda os registros de ponto (dados de exemplo)
+     2. Preenche o <select> de colaboradores
+     3. Desenha as linhas da tabela
+     4. Filtra por colaborador e período ao enviar o formulário
+     5. Calcula as horas trabalhadas de cada dia e o total do período
+   ===================================================================== */
 
-(function () {
-    // Dados de exemplo — substitua pelos lançamentos reais vindos do seu backend/API.
-    // Cada registro representa um dia com os 4 horários batidos pelo colaborador.
-    const registros = [
-        { id_linha: 1, colaborador: 'Ana Souza', data: '2026-09-15', entrada: '08:02', saidaAlmoco: '12:00', retornoAlmoco: '13:01', saida: '17:58' },
-        { id_linha: 2, colaborador: 'Ana Souza', data: '2026-09-16', entrada: '08:05', saidaAlmoco: '12:03', retornoAlmoco: '13:00', saida: '18:10' },
-        { id_linha: 3, colaborador: 'Ana Souza', data: '2026-09-17', entrada: '07:59', saidaAlmoco: '12:01', retornoAlmoco: '12:58', saida: '17:55' },
-        { id_linha: 4, colaborador: 'Ana Souza', data: '2026-09-18', entrada: '08:10', saidaAlmoco: '12:05', retornoAlmoco: '13:05', saida: '18:02' },
-        { id_linha: 5, colaborador: 'Ana Souza', data: '2026-09-19', entrada: '08:00', saidaAlmoco: '12:00', retornoAlmoco: '13:00', saida: '17:30' },
-        { id_linha: 6, colaborador: 'Bruno Lima', data: '2026-09-15', entrada: '08:30', saidaAlmoco: '12:15', retornoAlmoco: '13:15', saida: '18:00' },
-        { id_linha: 7, colaborador: 'Bruno Lima', data: '2026-09-16', entrada: '08:28', saidaAlmoco: '12:10', retornoAlmoco: '13:12', saida: '18:05' },
-        { id_linha: 8, colaborador: 'Bruno Lima', data: '2026-09-17', entrada: '08:35', saidaAlmoco: '12:20', retornoAlmoco: '13:10', saida: '17:50' },
-        { id_linha: 9, colaborador: 'Carla Mendes', data: '2026-09-15', entrada: '09:00', saidaAlmoco: '13:00', retornoAlmoco: '14:00', saida: '18:30' },
-        { id_linha: 10, colaborador: 'Carla Mendes', data: '2026-09-16', entrada: '08:55', saidaAlmoco: '12:58', retornoAlmoco: '14:02', saida: '18:20' }
-    ];
 
-    const form = document.getElementById('filterForm');
-    const tableBody = document.getElementById('tableBody');
-    const tfootTotal = document.getElementById('tfootTotal');
-    const emptyState = document.getElementById('emptyState');
-    const colaboradorSelect = document.getElementById('colaborador');
+/* =====================================================================
+   1) ELEMENTOS DA TELA
+   Buscamos no HTML cada elemento que o código vai usar, uma única vez,
+   e guardamos em constantes. "getElementById" procura pelo atributo id.
+   ===================================================================== */
+const formFiltros = document.getElementById("filterForm");   // <form> dos filtros
+const selectColab = document.getElementById("colaborador");  // <select> de colaborador
+const inputInicio = document.getElementById("dataInicio");   // data inicial ("De")
+const inputFim    = document.getElementById("dataFim");      // data final ("Até")
+const tableBody   = document.getElementById("tableBody");    // <tbody> (linhas entram aqui)
+const totalPeriodo = document.getElementById("totalPeriodo"); // célula com o total do rodapé
 
-    // 1. Pega só os nomes, sem repetir
-    const nomesUnicos = [];
-    for (const registro of registros) {
-        //Verifica se o nome já existe na lista
-        if (nomesUnicos.includes(registro.colaborador) == false) {
-            //Se não existir adiciona
-            nomesUnicos.push(registro.colaborador);
-        }
+// Quantidade de colunas da tabela (usada para a mensagem de "sem registros")
+const TOTAL_COLUNAS = 8;
+
+
+/* =====================================================================
+   2) DADOS
+   Por enquanto são dados de exemplo escritos à mão.
+   Mais tarde você pode trocar este array por dados vindos de uma API
+   (fetch) ou de um banco, mantendo o mesmo formato.
+
+   Formato de cada registro:
+     id               número único do registro
+     colaborador      nome da pessoa
+     data             "AAAA-MM-DD" (mesmo formato do <input type="date">)
+     entrada          "HH:MM"
+     saidaIntervalo   "HH:MM" ou "" se não houve intervalo
+     retornoIntervalo "HH:MM" ou "" se não houve intervalo
+     saida            "HH:MM"
+   ===================================================================== */
+const registros = [
+  { id: 1, colaborador: "Ana Souza",   data: "2026-09-28", entrada: "08:00", saidaIntervalo: "12:00", retornoIntervalo: "13:00", saida: "17:00" },
+  { id: 2, colaborador: "Ana Souza",   data: "2026-09-29", entrada: "08:10", saidaIntervalo: "12:05", retornoIntervalo: "13:05", saida: "17:30" },
+  { id: 3, colaborador: "Ana Souza",   data: "2026-09-30", entrada: "07:55", saidaIntervalo: "12:00", retornoIntervalo: "13:00", saida: "16:45" },
+  { id: 4, colaborador: "Bruno Lima",  data: "2026-09-28", entrada: "09:00", saidaIntervalo: "12:30", retornoIntervalo: "13:30", saida: "18:00" },
+  { id: 5, colaborador: "Bruno Lima",  data: "2026-09-29", entrada: "09:05", saidaIntervalo: "12:30", retornoIntervalo: "13:30", saida: "18:10" },
+  { id: 6, colaborador: "Carla Mendes", data: "2026-09-30", entrada: "08:00", saidaIntervalo: "",      retornoIntervalo: "",      saida: "14:00" },
+];
+
+
+/* =====================================================================
+   3) FUNÇÕES AUXILIARES (cálculo e formatação)
+   ===================================================================== */
+
+/* Converte "HH:MM" em minutos desde meia-noite.
+   Ex.: "08:30" -> 8*60 + 30 = 510.
+   Trabalhar em minutos deixa as contas de hora simples (só subtrair). */
+function paraMinutos(hhmm) {
+  const [horas, minutos] = hhmm.split(":").map(Number); // "08:30" -> [8, 30]
+  return horas * 60 + minutos;
+}
+
+/* Converte minutos em texto "HH:MM".
+   Ex.: 510 -> "08:30".
+   padStart(2, "0") completa com zero à esquerda (8 -> "08").
+   Math.floor arredonda para baixo; "%" devolve o resto da divisão. */
+function formatarHoras(totalMinutos) {
+  const horas = Math.floor(totalMinutos / 60);
+  const minutos = totalMinutos % 60;
+  return String(horas).padStart(2, "0") + ":" + String(minutos).padStart(2, "0");
+}
+
+/* Converte "AAAA-MM-DD" em "DD/MM/AAAA" para exibir.
+   Fazemos com split em vez de new Date() para evitar o bug de fuso
+   horário, que às vezes mostra o dia anterior. */
+function formatarData(iso) {
+  const [ano, mes, dia] = iso.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
+/* Calcula os minutos trabalhados em um registro.
+   - Com intervalo: (intervalo - entrada) + (saída - retorno)
+   - Sem intervalo: saída - entrada
+   Se faltar algum horário essencial, devolve 0. */
+function calcularMinutos(reg) {
+  if (!reg.entrada || !reg.saida) return 0;
+
+  const entrada = paraMinutos(reg.entrada);
+  const saida = paraMinutos(reg.saida);
+
+  // Teve intervalo? Só se os dois horários do intervalo existirem.
+  if (reg.saidaIntervalo && reg.retornoIntervalo) {
+    const saidaInt = paraMinutos(reg.saidaIntervalo);
+    const retorno = paraMinutos(reg.retornoIntervalo);
+    return (saidaInt - entrada) + (saida - retorno);
+  }
+
+  return saida - entrada;
+}
+
+
+/* =====================================================================
+   4) PREENCHER O SELECT DE COLABORADORES
+   Pegamos os nomes dos registros, removemos repetidos e criamos uma
+   <option> para cada um.
+   ===================================================================== */
+function preencherColaboradores() {
+  // "Set" guarda valores únicos; "..." transforma de volta em array.
+  const nomes = [...new Set(registros.map((r) => r.colaborador))];
+
+  // Opção inicial: value vazio significa "sem filtro de colaborador"
+  selectColab.innerHTML = '<option value="">Todos</option>';
+
+  nomes.forEach((nome) => {
+    const opcao = document.createElement("option"); // cria <option>
+    opcao.value = nome;                             // valor enviado/lido
+    opcao.textContent = nome;                       // texto visível
+    selectColab.appendChild(opcao);                 // coloca dentro do <select>
+  });
+}
+
+
+/* =====================================================================
+   5) CRIAR UMA CÉLULA (<td>)
+   Função pequena usada para montar cada coluna da linha.
+     texto : o que aparece na célula
+     rotulo: vai para data-label (o CSS usa no layout de celular)
+     classe: classe CSS opcional (date, time, total...)
+   Usamos textContent (e não innerHTML) por segurança: o texto nunca é
+   interpretado como código HTML.
+   ===================================================================== */
+function criarCelula(texto, rotulo, classe) {
+  const td = document.createElement("td");
+  td.textContent = texto;
+  td.dataset.label = rotulo;           // vira o atributo data-label="..."
+  if (classe) td.classList.add(classe);
+  return td;
+}
+
+
+/* =====================================================================
+   6) CRIAR UMA LINHA COMPLETA (<tr>) PARA UM REGISTRO
+   ===================================================================== */
+function criarLinha(reg) {
+  const tr = document.createElement("tr");
+
+  // Colunas na mesma ordem do cabeçalho da tabela
+  tr.appendChild(criarCelula(reg.colaborador, "Colaborador"));
+  tr.appendChild(criarCelula(formatarData(reg.data), "Data", "date"));
+  tr.appendChild(criarCelula(reg.entrada || "--:--", "Entrada", "time"));
+  tr.appendChild(criarCelula(reg.saidaIntervalo || "--:--", "Saída intervalo", "time"));
+  tr.appendChild(criarCelula(reg.retornoIntervalo || "--:--", "Retorno intervalo", "time"));
+  tr.appendChild(criarCelula(reg.saida || "--:--", "Saída", "time"));
+  tr.appendChild(criarCelula(formatarHoras(calcularMinutos(reg)), "Horas trabalhadas", "total"));
+
+  // Coluna de ações: dois ícones (aprovar e reprovar).
+  const tdAcoes = document.createElement("td");
+  tdAcoes.classList.add("acoes");
+
+  const btnEditar = document.createElement("span");
+  btnEditar.className = "material-symbols-outlined";
+  btnEditar.textContent = "check";
+  btnEditar.title = "Check";
+  btnEditar.dataset.acao = "check";    
+  btnEditar.dataset.id = reg.id;        
+  btnEditar.tabIndex = 0;              
+
+  const btnExcluir = document.createElement("span");
+  btnExcluir.className = "material-symbols-outlined";
+  btnExcluir.textContent = "close";
+  btnExcluir.title = "Reprovar";
+  btnExcluir.dataset.acao = "reprovar";
+  btnExcluir.dataset.id = reg.id;
+  btnExcluir.tabIndex = 0;
+
+  tdAcoes.appendChild(btnEditar);
+  tdAcoes.appendChild(btnExcluir);
+  tr.appendChild(tdAcoes);
+
+  return tr;
+}
+
+function renderizarTabela(lista) {
+  tableBody.innerHTML = "";   // apaga as linhas antigas
+
+  // Sem registros: mostra uma mensagem em uma única linha
+  if (lista.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = TOTAL_COLUNAS;               // ocupa todas as colunas
+    td.className = "empty-state";             // estilo definido no CSS
+    td.textContent = "Nenhum registro encontrado para o período.";
+    tr.appendChild(td);
+    tableBody.appendChild(tr);
+    totalPeriodo.textContent = "00:00";
+    return;
+  }
+
+  // Cria uma linha por registro e soma os minutos para o total
+  let somaMinutos = 0;
+  lista.forEach((reg) => {
+    tableBody.appendChild(criarLinha(reg));
+    somaMinutos += calcularMinutos(reg);
+  });
+
+  totalPeriodo.textContent = formatarHoras(somaMinutos);
+}
+
+
+/* =====================================================================
+   8) FILTRAR
+   Lê os valores dos campos e devolve só os registros que combinam.
+   - Campo vazio = aquele filtro não é aplicado.
+   - Datas no formato AAAA-MM-DD podem ser comparadas como texto
+     (">=" e "<=") e a ordem fica correta.
+   ===================================================================== */
+function filtrarRegistros() {
+  const colab = selectColab.value;
+  const inicio = inputInicio.value;
+  const fim = inputFim.value;
+
+  return registros.filter((reg) => {
+    if (colab && reg.colaborador !== colab) return false;  // outro colaborador
+    if (inicio && reg.data < inicio) return false;         // antes do início
+    if (fim && reg.data > fim) return false;               // depois do fim
+    return true;                                           // passou em tudo
+  });
+}
+
+
+/* =====================================================================
+   9) EVENTOS (reações às ações do usuário)
+   ===================================================================== */
+
+// Ao clicar em "Filtrar" (envio do formulário)
+formFiltros.addEventListener("submit", (evento) => {
+  evento.preventDefault();   // impede o navegador de recarregar a página
+  renderizarTabela(filtrarRegistros());
+});
+
+// Cliques nos ícones de ação.
+// "Delegação de eventos": um único ouvinte no <tbody> atende todas as
+// linhas, inclusive as criadas depois. Mais simples e eficiente do que
+// colocar um ouvinte em cada ícone.
+tableBody.addEventListener("click", (evento) => {
+  // closest procura o ícone clicado (ou o ancestral mais próximo com data-acao)
+  const botao = evento.target.closest("[data-acao]");
+  if (!botao) return;   // clicou em outra coisa: ignora
+
+  const id = Number(botao.dataset.id);
+  const acao = botao.dataset.acao;
+
+  if (acao === "editar") {
+    // Aqui você abriria um modal ou outra tela de edição.
+    console.log("Editar registro", id);
+  }
+
+  if (acao === "excluir") {
+    // confirm abre uma caixa Sim/Não do navegador
+    if (confirm("Deseja excluir este registro?")) {
+      const posicao = registros.findIndex((r) => r.id === id);
+      if (posicao !== -1) registros.splice(posicao, 1);  // remove do array
+      renderizarTabela(filtrarRegistros());              // redesenha mantendo os filtros
     }
+  }
+});
 
-    // 2. Ordena em ordem alfabética
-    nomesUnicos.sort();
 
-    // 3. Cria uma <option> para cada nome
-    for (const nome of nomesUnicos) {
-        const opt = document.createElement('option');
-        opt.value = nome;
-        opt.textContent = nome;
-        colaboradorSelect.appendChild(opt);
-    }
+/* =====================================================================
+   10) INICIALIZAÇÃO
+   Roda uma vez quando a página carrega: preenche o select e mostra
+   todos os registros.
+   ===================================================================== */
+preencherColaboradores();
+renderizarTabela(registros);
 
-    function paraMinutos(hhmm) {
-        const [h, m] = hhmm.split(':').map(Number);
-        return h * 60 + m;
-    }
 
-    function paraHHMM(minutosTotais) {
-        const sinal = minutosTotais < 0 ? '-' : '';
-        const abs = Math.abs(minutosTotais);
-        const h = Math.floor(abs / 60);
-        const m = abs % 60;
-        return `${sinal}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-    }
+/* =====================================================================
+   11) MENU PERSONALIZADO <my-menu> (OPCIONAL)
+   Seu HTML tem a tag <my-menu>. Para ela funcionar, a classe precisa
+   existir ANTES do customElements.define. O erro
+   "MeuMenu is not defined" acontecia por faltar essa classe.
 
-    function horasTrabalhadasMin(r) {
-        const manha = paraMinutos(r.saidaAlmoco) - paraMinutos(r.entrada);
-        const tarde = paraMinutos(r.saida) - paraMinutos(r.retornoAlmoco);
-        return manha + tarde;
-    }
+   Se você já tem a classe em outro arquivo, apague este bloco e use:
+     import { MeuMenu } from "caminho/do/arquivo.js";
+   (o import deve ficar no TOPO do script.js).
 
-    function formatarData(iso) {
-        const [ano, mes, dia] = iso.split('-');
-        return `${dia}/${mes}/${ano}`;
-    }
+   Para testar com um menu simples, tire os comentários abaixo:
 
-    function carregarListaTela(lista) {
-        /*Limpa tudo que existe dentro da table principal da tela definida na variavel
-        const tableBody = document.getElementById('tableBody') */
-        tableBody.innerHTML = '';
-
-        /*Verifica se a lista recebida pelo parâmetro está vazia para retornar
-        alguma mensagem ou tratamento de que não foram encontrados registros*/
-        if (lista.length === 0) {
-            emptyState.style.display = 'block';
-            tfootTotal.textContent = '00:00';
-            return;
-        }
-
-        emptyState.style.display = 'none';
-
-        let totalMin = 0;
-
-        lista
-            .slice()
-            .sort((a, b) => (a.data < b.data ? -1 : 1))
-            .forEach(r => {
-                const minutos = horasTrabalhadasMin(r);
-                totalMin += minutos;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-            <td class="id-registro" data-label="">${r.id_linha}</td>
-            <td class="time" data-label="Colaborador">${r.colaborador}</td>
-            <td class="date" data-label="Data">${formatarData(r.data)}</td>
-            <td class="time" data-label="Entrada">${r.entrada} > ${r.retornoAlmoco}</td>
-            <td class="time" data-label="Saída almoço">${r.saidaAlmoco} > ${r.saida}</td>
-            <td class="time" data-label="Retorno almoço">${r.retornoAlmoco}</td>
-            <td class="time" data-label="Saída">${r.saida}</td>
-            <td class="total" data-label="Horas trabalhadas">${paraHHMM(minutos)}</td>
-            <td class="acoes" data-label="Acoes">
-              <span class="material-symbols-outlined">check</span>
-              <span class="material-symbols-outlined">close</span>  
-            </td>
-          `;
-                tableBody.appendChild(tr);
-            });
-        tfootTotal.textContent = paraHHMM(totalMin);
-    }
-
-    function aplicarFiltros() {
-        /*Coleta o valor inputado no filtro colaborador através da variavel
-        colaboradorSelect que armazena o componente select do filtro
-        const colaboradorSelect = document.getElementById('colaborador') */
-        const colaborador = colaboradorSelect.value;
-        //Coleta o valor inputado no filtro de data inicio
-        const dataInicio = document.getElementById('dataInicio').value;
-        //Coleta o valor inputado no filtro de data fim
-        const dataFim = document.getElementById('dataFim').value;
-
-        /*Utiliza a function nativa (filter) para filtrar a lista registros de 
-        acordo com as variaveis do filtro definidas acima */
-        const filtrados = registros.filter(r => {
-            /*verifica primeiro se a variavel está preenchida e também se satifaz
-            a condição de busca para cada registro */
-            if (
-                (colaborador == '' || r.colaborador == colaborador) &&
-                (dataInicio == '' || r.data >= dataInicio) &&
-                (dataFim == '' || r.data <= dataFim)
-            ) return true;
-            return false;
-        });
-        //Invoca a function responsavel por carregar os elementos na tela com HTML
-        carregarListaTela(filtrados);
-    }
-
-    /*Adiciona uma "escuta" no botão submit da variavel "form"
-    que esta recebendo o <form> dos filtros: document.getElementById('filterForm')*/
-    form.addEventListener('submit', e => {
-        //Remove o comportamento de recarregar a tela do navegador ao clicar no submit do form
-        e.preventDefault();
-        //Executa a ação de filtrar a lista e carregar o resultado na tela através do innerHTML
-        aplicarFiltros();
-    });
-})();
+   class MeuMenu extends HTMLElement {
+     connectedCallback() {          // roda quando a tag entra na página
+       this.innerHTML = "<nav>Menu</nav>";
+     }
+   }
+   customElements.define("my-menu", MeuMenu);
+   ===================================================================== */

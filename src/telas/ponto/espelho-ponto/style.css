@@ -1,397 +1,425 @@
-/* =====================================================================
-   FOLHA DE ESTILOS: tela com filtros + tabela de registros diários
-   (data, horários, total, ações) e rodapé com o total do período.
-   Em telas pequenas, a tabela vira uma lista de cartões.
-   ===================================================================== */
-
-/* Importa a fonte "Public Sans" do Google Fonts (pesos 400, 500, 600 e 700).
-   display=swap mostra o texto com a fonte reserva até a principal carregar,
-   evitando "texto invisível" durante o carregamento. */
-@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap");
-
 /* ===== TOKENS =====
-   Variáveis CSS (design tokens): centralizam cores, raio e fonte.
-   Para mudar o visual do site todo, basta alterar os valores aqui. */
+   Variáveis que centralizam cores, raio e fonte.
+   Mudou aqui, mudou na página inteira. */
 :root {
-  --bg: #eef1f4;            /* fundo geral da página */
-  --surface: #ffffff;       /* fundo de painéis, campos e linhas */
-  --ink: #1b2733;           /* cor principal do texto (azul-escuro quase preto) */
-  --muted: #5e6b78;         /* texto secundário: rótulos, ícones, cabeçalhos */
-  --line: #d9dfe5;          /* cor das bordas e divisórias */
-  --row-hover: #f5f8fa;     /* fundo da linha da tabela ao passar o mouse */
-  --accent: #151a51;        /* cor de destaque: botão, totais */
-  --accent-hover: #2458c4;  /* versão mais escura do destaque, para o hover */
-  --accent-soft: #dff0f1;   /* versão clara do destaque, para fundos sutis */
-  --focus: #1f6feb;         /* azul do contorno de foco (navegação por teclado) */
+    --bg: #eef1f4;
+    /* fundo geral da página */
+    --surface: #ffffff;
+    /* fundo de painéis, campos e linhas */
+    --ink: #1b2733;
+    /* cor principal do texto */
+    --muted: #5e6b78;
+    /* texto secundário: rótulos, ícones, títulos de coluna */
+    --line: #d9dfe5;
+    /* bordas e divisórias */
+    --row-hover: #f5f8fa;
+    /* fundo da linha ao passar o mouse */
+    --accent: #151a51;
+    /* cor principal, usada no botão */
+    ;
+    /* cor de destaque: botão e horas trabalhadas */
+    --accent-hover: #2458c4;
+    /* destaque mais escuro, usado no hover */
+    --accent-soft: #dff0f1;
+    /* destaque bem claro, usado em fundos sutis */
+    --focus: #1f6feb;
+    /* contorno de foco (navegação por teclado) */
 
-  --radius: 8px;            /* arredondamento padrão dos painéis */
-  /* Fonte principal, com alternativas caso ela não carregue */
-  --font: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    /* Cores das faixas da tabela (separadas do --ink para você
+     poder mudá-las sem afetar a cor do texto da página) */
+    --header-bg: #f7f9fb;
+    /* faixa do cabeçalho da tabela (Data, Entrada...) */
+    --footer-bg: #1b2733;
+    /* faixa do total do período */
+    --footer-ink: #ffffff;
+    /* cor do texto na faixa do total */
+
+    --radius: 8px;
+    /* arredondamento padrão dos painéis */
+    /* Fonte principal com alternativas caso ela não carregue */
+    --font: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Faz padding e borda entrarem na largura/altura declarada do elemento.
-   Isso torna o cálculo de tamanhos muito mais previsível. */
+/* padding e borda passam a contar dentro da largura/altura declarada,
+   o que deixa o cálculo de tamanhos previsível */
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
-
 /* Estilos base da página */
 body {
-  margin: 850;                       /* remove a margem padrão do navegador */
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 1.5;                /* espaçamento confortável entre linhas */
+    margin: 0;
+    /* remove a margem padrão do navegador */
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.5;
 }
 
 /* ===== LAYOUT ===== */
 
-/* Contêiner central: limita a largura e centraliza o conteúdo */
+/* Contêiner principal (<div class="wrap">): limita a largura e centraliza */
 .wrap {
-  max-width: 1080px;
-  margin: 0 auto;                  /* "auto" nas laterais = centralizado */
-  padding: 80px 24px 56px;         /* topo | laterais | base */
+    max-width: 1080px;
+    margin: 0 auto;
+    /* "auto" nas laterais = centralizado */
+    padding: 56px 24px 56px;
+    /* topo | laterais | base */
 }
 
 /* Cabeçalho da página */
 header {
-  margin-bottom: -2px;
+    margin-bottom: 24px;
 }
 
-/* Título principal */
+/* Título "Espelho de ponto" */
 h1 {
-  margin: 20;
+     margin: 20;
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.01em;         /* aperta levemente as letras (visual mais refinado) */
 }
-
 /* ===== FILTROS ===== */
 
-/* Barra de filtros: campos lado a lado dentro de um "cartão" branco */
+/* Formulário (#filterForm): campos lado a lado dentro de um cartão branco */
 .filters {
-  display: flex;
-  flex-wrap: wrap;                 /* permite quebrar linha se faltar espaço */
-  align-items: flex-end;           /* alinha os itens pela base (campos e botão alinhados) */
-  gap: 16px;                       /* espaço entre os campos */
-  margin-bottom: 20px;
-  padding: 16px 20px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+    display: flex;
+    flex-wrap: wrap;
+    /* quebra de linha se faltar espaço */
+    align-items: flex-end;
+    /* alinha pela base: campos e botão ficam na mesma linha */
+    gap: 16px;
+    /* espaço entre os itens */
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
 }
 
 /* Cada campo: rótulo em cima, controle embaixo */
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;                        /* espaço entre rótulo e controle */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    /* espaço entre rótulo e controle */
 }
 
-/* O primeiro campo (ex.: seleção principal) cresce para ocupar o espaço
-   livre; largura mínima/base de 220px */
+/* O primeiro campo (Colaborador) cresce e ocupa o espaço livre */
 .field:first-child {
-  flex: 1 1 220px;                 /* cresce | encolhe | tamanho base */
+    flex: 1 1 220px;
+    /* cresce | encolhe | largura base */
+}
+
+/* Componente <my-menu> (elemento personalizado).
+   Elementos customizados são "inline" por padrão, então
+   definimos como bloco para se comportar como item do flex. */
+my-menu {
+    display: block;
 }
 
 /* Rótulos dos campos */
 label {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
 }
 
-/* Aparência unificada para <select> e campos de data */
+/* Aparência unificada de <select> e campos de data */
 select,
 input[type="date"] {
-  height: 40px;
-  padding: 0 12px;
-  font: inherit;                   /* herda fonte da página (controles não herdam por padrão) */
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 6px;
+    height: 40px;
+    padding: 0 12px;
+    font: inherit;
+    /* herda a fonte da página (controles não herdam sozinhos) */
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
 }
 
 /* Borda um pouco mais escura ao passar o mouse */
 select:hover,
 input[type="date"]:hover {
-  border-color: #b4bec8;
+    border-color: #b4bec8;
 }
 
-/* Botão "Aplicar" (filtrar) */
+/* Botão "Filtrar" */
 .apply {
-  height: 40px;                    /* mesma altura dos campos */
-  padding: 0 24px;
-  font: inherit;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  border: 0;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;    /* suaviza a troca de cor no hover */
+    height: 40px;
+    /* mesma altura dos campos */
+    padding: 0 24px;
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    /* suaviza a troca de cor no hover */
 }
 
 .apply:hover {
-  background: var(--accent-hover);
+    background: var(--accent-hover);
 }
 
-/* Contorno de foco visível apenas na navegação por teclado
-   (:focus-visible). Importante para acessibilidade.
-   Inclui também os ícones de ação da tabela. */
+/* Contorno de foco visível só na navegação por teclado (acessibilidade).
+   Inclui os ícones da coluna de ações. */
 select:focus-visible,
 input:focus-visible,
 .apply:focus-visible,
 .acoes .material-symbols-outlined:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;             /* afasta o contorno do elemento */
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    /* afasta o contorno do elemento */
 }
 
 /* ===== TABELA ===== */
 
-/* Painel que envolve a tabela: dá o visual de cartão e permite
-   rolagem horizontal se a tabela for mais larga que a tela */
+/* Painel que envolve a tabela: visual de cartão e rolagem horizontal
+   caso a tabela seja mais larga que a tela */
 .table-panel {
-  overflow-x: auto;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
 }
 
-/* Tabela ocupa 100% da largura, sem espaço entre as células */
+/* Tabela com 100% da largura e sem espaço entre as células */
 .table-width {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 /* Conteúdo das células centralizado */
 .table-width td {
-  text-align: center;
+    text-align: center;
 }
 
-/* Células de cabeçalho */
+/* Cabeçalho: Colaborador, Data, Entrada, Saída intervalo, etc. */
 th {
-  padding: 14px 16px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-align: center;
-  background: #f7f9fb;             /* cinza bem claro, diferencia do corpo */
-  border-bottom: 1px solid var(--line);
-  white-space: nowrap;             /* impede quebra de linha nos títulos */
+    padding: 14px 16px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+    background: var(--header-bg);
+    /* cor da faixa do cabeçalho */
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+    /* impede quebra de linha nos títulos */
 }
 
-/* Células do corpo */
+/* Células do corpo (linhas criadas pelo JavaScript em #tableBody) */
 td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--line);
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
 }
 
-/* Remove a borda da última linha (o painel já tem borda) */
+/* A última linha não precisa de borda inferior (o painel já tem borda) */
 tbody tr:last-child td {
-  border-bottom: 0;
+    border-bottom: 0;
 }
 
 /* Destaca a linha sob o cursor */
 tbody tr:hover {
-  background: var(--row-hover);
+    background: var(--row-hover);
 }
 
-/* Números alinhados em colunas:
-   "tabular-nums" faz todos os dígitos terem a mesma largura,
-   então valores como horas e totais ficam alinhados verticalmente. */
+/* Números alinhados: "tabular-nums" dá a todos os dígitos a mesma
+   largura, então datas, horários e totais alinham na vertical */
 td.date,
 td.time,
 td.total {
-  font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums;
 }
 
-/* Coluna de data em negrito leve */
+/* Data em destaque leve */
 td.date {
-  font-weight: 600;
+    font-weight: 600;
 }
 
-/* Coluna de horário com a cor padrão do texto */
+/* Horários (entrada, saída, intervalos) na cor padrão do texto */
 td.time {
-  color: var(--ink);
+    color: var(--ink);
 }
 
-/* Coluna de total em destaque (negrito + cor de destaque) */
+/* Horas trabalhadas: negrito + cor de destaque */
 td.total {
-  font-weight: 700;
-  color: var(--accent);
+    font-weight: 700;
+    color: var(--accent);
 }
 
 /* ===== AÇÕES =====
-   Coluna com ícones (Material Symbols), como editar/excluir */
-.acoes .material-symbols-outlined {
-  padding: 6px;                    /* aumenta a área clicável do ícone */
-  font-size: 20px;
-  color: var(--muted);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
+   Coluna "Ações" com ícones Material Symbols (editar, excluir...).
+   Atenção: a fonte de ícones precisa ser carregada no <head> do HTML. */
 
-/* Ao passar o mouse: ícone na cor de destaque com fundo suave */
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+/* Hover: ícone na cor de destaque com fundo suave */
 .acoes .material-symbols-outlined:hover {
-  color: var(--accent);
-  background: var(--accent-soft);
+    color: var(--accent);
+    background: var(--accent-soft);
 }
 
 /* ===== RODAPÉ: TOTAL DO PERÍODO ===== */
 
-/* Faixa escura no final da tabela com o total geral */
+/* Faixa de total no fim da tabela */
 tfoot td {
-  padding: 18px 16px;
-  color: #fff;
-  background: var(--ink);
-  border-bottom: 0;
+    padding: 18px 16px;
+    color: var(--footer-ink);
+    background: var#151a51;
+    /* cor da faixa de total */
+    border-bottom: 0;
 }
 
-/* Rótulo ("Total do período"), alinhado à esquerda */
+/* Rótulo "Total do período", alinhado à esquerda */
 tfoot .total-label {
-  font-weight: 600;
-  text-align: left;
-  white-space: nowrap;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
 }
 
-/* Valor do total: maior e em negrito */
+/* Valor total de horas: maior e em negrito */
 tfoot .total-value {
-  font-size: 1.25rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ===== ESTADO VAZIO =====
-   Mensagem exibida quando não há registros no período filtrado */
+   Mensagem mostrada quando não há registros no período filtrado */
 .empty-state {
-  padding: 40px 16px;
-  text-align: center;
-  color: var(--muted);
+    padding: 40px 16px;
+    text-align: center;
+    color: var(--muted);
 }
 
 /* ===== CELULAR: cada dia vira um cartão =====
-   Em telas de até 720px, a tabela deixa de ser tabela:
-   cada linha (<tr>) vira um cartão, e cada célula mostra
-   "rótulo ... valor" usando o atributo data-label do HTML. */
+   Até 720px de largura, a tabela deixa de ser tabela: cada linha
+   vira um cartão e cada célula mostra "rótulo ... valor", usando o
+   atributo data-label que o JavaScript coloca em cada <td>. */
 @media (max-width: 720px) {
-  /* Menos espaço nas bordas da página */
-  .wrap {
-    padding: 20px 16px 40px;
-  }
 
-  /* Filtros empilhados verticalmente, ocupando toda a largura */
-  .filters {
-    flex-direction: column;
-    align-items: stretch;
-  }
+    /* Menos espaço nas bordas da página */
+    .wrap {
+        padding: 20px 16px 40px;
+    }
 
-  /* Desfaz o crescimento flexível do primeiro campo
-     (na coluna, ele não deve esticar na altura) */
-  .field:first-child {
-    flex: none;
-  }
+    /* Filtros empilhados, ocupando toda a largura */
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
-  /* Botão ocupa a largura toda */
-  .apply {
-    width: 100%;
-  }
+    /* Na coluna, o primeiro campo não deve esticar na altura */
+    .field:first-child {
+        flex: none;
+    }
 
-  /* O painel deixa de ser "caixa": os cartões é que terão o visual */
-  .table-panel {
-    overflow: visible;
-    background: transparent;
-    border: 0;
-  }
+    /* Botão "Filtrar" ocupa a largura toda */
+    .apply {
+        width: 100%;
+    }
 
-  /* Todos os elementos da tabela viram blocos comuns,
-     o que "quebra" o comportamento de tabela */
-  .table-width,
-  .table-width tbody,
-  .table-width tfoot,
-  .table-width tr,
-  .table-width td {
-    display: block;
-  }
+    /* O painel deixa de ser caixa: o visual passa a ser dos cartões */
+    .table-panel {
+        overflow: visible;
+        background: transparent;
+        border: 0;
+    }
 
-  /* Esconde o cabeçalho; os rótulos virão de data-label em cada célula */
-  .table-width thead {
-    display: none;
-  }
+    /* Todos os elementos da tabela viram blocos comuns,
+     quebrando o comportamento de tabela */
+    .table-width,
+    .table-width tbody,
+    .table-width tfoot,
+    .table-width tr,
+    .table-width td {
+        display: block;
+    }
 
-  /* Cada linha vira um cartão com borda e cantos arredondados */
-  .table-width tbody tr {
-    margin-bottom: 12px;           /* espaço entre os cartões */
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    overflow: hidden;              /* mantém o conteúdo dentro dos cantos arredondados */
-  }
+    /* Esconde o cabeçalho: os rótulos vêm do data-label de cada célula */
+    .table-width thead {
+        display: none;
+    }
 
-  /* Cada célula vira uma linha: rótulo à esquerda, valor à direita */
-  .table-width td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 16px;
-    text-align: right;
-    border-bottom: 1px solid var(--line);
-  }
+    /* Cada linha vira um cartão */
+    .table-width tbody tr {
+        margin-bottom: 12px;
+        /* espaço entre cartões */
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+        /* conteúdo respeita os cantos arredondados */
+    }
 
-  /* Cria o rótulo a partir do atributo data-label da célula,
-     ex.: <td data-label="Entrada"> mostra "Entrada" */
-  .table-width td::before {
-    content: attr(data-label);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-align: left;
-  }
+    /* Cada célula vira uma linha: rótulo à esquerda, valor à direita */
+    .table-width td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 16px;
+        text-align: right;
+        border-bottom: 1px solid var(--line);
+    }
 
-  /* A célula da data vira o "título" do cartão, com fundo cinza claro */
-  .table-width td.date {
-    background: #f7f9fb;
-  }
+    /* Cria o rótulo a partir de data-label (ex.: <td data-label="Entrada">) */
+    .table-width td::before {
+        content: attr(data-label);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-align: left;
+    }
 
-  /* Célula de ações: ícones alinhados à direita, sem borda e sem rótulo */
-  .table-width td.acoes {
-    justify-content: flex-end;
-    border-bottom: 0;
-  }
+    /* A data vira o "título" do cartão, com fundo do cabeçalho */
+    .table-width td.date {
+        background: var(--header-bg);
+    }
 
-  .table-width td.acoes::before {
-    display: none;
-  }
+    /* Ações: ícones à direita, sem borda e sem rótulo */
+    .table-width td.acoes {
+        justify-content: flex-end;
+        border-bottom: 0;
+    }
 
-  /* rodapé: só o rótulo e o total */
-  /* A linha do rodapé vira uma faixa escura: rótulo | valor */
-  .table-width tfoot tr {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    background: var(--ink);
-    border-radius: var(--radius);
-  }
+    .table-width td.acoes::before {
+        display: none;
+    }
 
-  /* Células do rodapé: sem padding/fundo próprios (a faixa já cuida disso) */
-  .table-width tfoot td {
-    display: block;
-    padding: 0;
-    background: none;
-  }
+    /* Rodapé: só o rótulo e o total, numa faixa única */
+    .table-width tfoot tr {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: var(--footer-bg);
+        border-radius: var(--radius);
+    }
 
-  /* Sem rótulos automáticos no rodapé */
-  .table-width tfoot td::before {
-    display: none;
-  }
+    /* Células do rodapé sem padding/fundo próprios (a faixa já cuida disso) */
+    .table-width tfoot td {
+        display: block;
+        padding: 0;
+        background: none;
+    }
 
-  /* Esconde células vazias do rodapé (data-label="") que não sejam
-     o rótulo nem o valor do total, deixando só os dois itens importantes */
-  .table-width tfoot td[data-label=""]:not(.total-label):not(.total-value) {
-    display: none;
-  }
+    /* Sem rótulos automáticos no rodapé */
+    .table-width tfoot td::before {
+        display: none;
+    }
+
+    /* Esconde as células vazias do rodapé (data-label="") que não sejam
+     o rótulo nem o valor do total */
+    .table-width tfoot td[data-label=""]:not(.total-label):not(.total-value) {
+        display: none;
+    }
 }

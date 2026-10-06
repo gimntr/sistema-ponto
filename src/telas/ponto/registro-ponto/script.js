@@ -1,4 +1,4 @@
-customElements.define("meu-menu", MeuMenu);
+
     // Dados de exemplo — substitua pelos lançamentos reais vindos do seu backend/API.
     // Cada registro representa um dia com os 4 horários batidos pelo colaborador.
     const registros = [
@@ -38,7 +38,7 @@ customElements.define("meu-menu", MeuMenu);
         const opt = document.createElement('option');
         opt.value = nome;
         opt.textContent = nome;
-        colaboradorSelect.appendChild(opt);
+
     }
 
     function paraMinutos(hhmm) {
@@ -135,11 +135,3 @@ customElements.define("meu-menu", MeuMenu);
         carregarListaTela(filtrados);
     }
 
-    /*Adiciona uma "escuta" no botão submit da variavel "form"
-    que esta recebendo o <form> dos filtros: document.getElementById('filterForm')*/
-    form.addEventListener('submit', e => {
-        //Remove o comportamento de recarregar a tela do navegador ao clicar no submit do form
-        e.preventDefault();
-        //Executa a ação de filtrar a lista e carregar o resultado na tela através do innerHTML
-        aplicarFiltros();
-    });
