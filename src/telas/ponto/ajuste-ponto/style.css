@@ -1,34 +1,19 @@
+/* ===== TOKENS =====
+   Variáveis que centralizam cores, raio e fonte. */
 :root {
-    --bg: #eef1f4;
-    /* fundo geral da página */
-    --surface: #ffffff;
-    /* fundo de painéis, campos e linhas */
-    --ink: #1b2733;
-    /* cor principal do texto */
-    --muted: #5e6b78;
-    /* texto secundário: rótulos, ícones, títulos de coluna */
-    --line: #d9dfe5;
-    /* bordas e divisórias */
-    --row-hover: #f5f8fa;
-    /* fundo da linha ao passar o mouse */
-    --accent: #151a51;
-    /* cor principal, usada no botão */
-
-    --accent-hover: #2458c4;
-    /* destaque mais escuro, usado no hover */
-    --accent-soft: #dff0f1;
-    /* destaque bem claro, usado em fundos sutis */
-    --focus: #1f6feb;
-    /* contorno de foco (navegação por teclado) */
-
-    /* Cores das faixas da tabela (separadas do --ink para você
-     poder mudá-las sem afetar a cor do texto da página) */
-    --header-bg: #f7f9fb;
-    /* faixa do cabeçalho da tabela (Data, Entrada...) */
-    --footer-bg: #1b2733;
-    /* faixa do total do período */
-    --footer-ink: #ffffff;
-    /* cor do texto na faixa do total */
+    --bg: #eef1f4;           /* fundo geral da página */
+    --surface: #ffffff;      /* fundo de painéis, campos e linhas */
+    --ink: #1b2733;          /* cor principal do texto */
+    --muted: #5e6b78;        /* texto secundário: rótulos, ícones, títulos de coluna */
+    --line: #d9dfe5;         /* bordas e divisórias */
+    --row-hover: #f5f8fa;    /* fundo da linha ao passar o mouse */
+    --accent: #151a51;       /* cor principal, usada no botão */
+    --accent-hover: #2458c4; /* destaque mais escuro, usado no hover */
+    --accent-soft: #dff0f1;  /* destaque bem claro, usado em fundos sutis */
+    --focus: #1f6feb;        /* contorno de foco (navegação por teclado) */
+    --header-bg: #f7f9fb;    /* faixa do cabeçalho da tabela (Data, Entrada...) */
+    --footer-bg: #1b2733;    /* faixa do total do período */
+    --footer-ink: #ffffff;   /* cor do texto na faixa do total */
 
     --radius: 8px;
     /* arredondamento padrão dos painéis */
@@ -68,7 +53,7 @@ header {
     margin-bottom: 24px;
 }
 
-/* Título "Ajuste de ponto" */
+/* Título "Espelho de ponto" */
 h1 {
      margin: 20;
   font-size: 1.75rem;

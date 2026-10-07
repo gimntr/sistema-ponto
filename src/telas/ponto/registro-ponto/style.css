@@ -1,9 +1,3 @@
-/* =====================================================
-   VARIÁVEIS DE COR
-   Ficam num só lugar. Para mudar o visual do site todo,
-   basta trocar os valores aqui.
-   Uso: var(--nome) em qualquer lugar do CSS.
-   ===================================================== */
 :root {
   --bg: #eef1f6;            /* cor de fundo da página */
   --card: #ffffff;          /* cor do cartão central */
@@ -21,17 +15,8 @@
   --espaco-relogio-botao: 30px;  /* <- mexa só neste valor */
 }
 
-/* =====================================================
-   RESET
-   O asterisco (*) pega TODOS os elementos da página.
-   Tira as margens e espaçamentos que o navegador coloca
-   por padrão, para você controlar tudo do zero.
-   ===================================================== */
 * {
-  box-sizing: border-box; /* padding e borda contam dentro da largura do elemento,
-                             evitando que ele "estoure" o tamanho definido */
-  margin: 0;              /* remove margens externas padrão */
-  padding: 0;             /* remove espaçamentos internos padrão */
+    box-sizing: border-box;
 }
 
 /* =====================================================
@@ -48,6 +33,11 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
                               /* usa a fonte do próprio sistema (Windows, Mac,
                                  Android...). Se uma não existir, tenta a próxima */
+}
+
+/* Cabeçalho da página */
+header {
+    margin-bottom: 40px;
 }
 
 /* =====================================================
@@ -188,7 +178,7 @@ body {
 
 /* Título "Últimos registros" */
 .log__title {
-  margin-bottom: 10px;
+  margin-bottom: 24px;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--muted);

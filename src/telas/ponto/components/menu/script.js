@@ -1,9 +1,3 @@
-import { carregarMenu } from '../components/menu/script.js';
-
-carregarMenu();
-
-// resto do código da tela aqui
-
 export async function carregarMenu() {
   // carrega o CSS do menu
   const css = document.createElement('link');
