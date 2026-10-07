@@ -1,17 +1,18 @@
-const btnAbrir = document.getElementById("btn-abrir-menu");
-const btnFechar = document.getElementById("btn-fechar-menu");
-const menuLateral = document.getElementById("menu-lateral");
-const header = document.getElementById("app-bar");
+export function inicializarMenu(container) {
+  const btnAbrir = container.querySelector("#btn-abrir-menu");
+  const btnFechar = container.querySelector("#btn-fechar-menu");
+  const menuLateral = container.querySelector("#menu-lateral");
+  const header = container.querySelector("#app-bar");
 
-function abrirMenu() {
-  menuLateral.classList.add("aberto");
-  header.style.display = "none";
+  function abrirMenu() {
+    menuLateral.classList.add("aberto");
+    menuLateral.style.zIndex = "1000";
+  }
+
+  function fecharMenu() {
+    menuLateral.classList.remove("aberto");
+  }
+
+  btnAbrir.addEventListener("click", abrirMenu);
+  btnFechar.addEventListener("click", fecharMenu);
 }
-
-function fecharMenu() {
-  menuLateral.classList.remove("aberto");
-  header.style.display = "block";
-}
-
-btnAbrir.addEventListener("click", abrirMenu);
-btnFechar.addEventListener("click", fecharMenu);

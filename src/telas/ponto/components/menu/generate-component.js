@@ -1,5 +1,6 @@
 const templateUrl = new URL("./index.html", import.meta.url);
 const styleUrl = new URL("./style.css", import.meta.url);
+const scriptUrl = new URL("./script.js", import.meta.url);
 
 class Banner extends HTMLElement {
   async connectedCallback() {
@@ -13,6 +14,9 @@ class Banner extends HTMLElement {
 
       const resposta = await fetch(templateUrl);
       this.innerHTML = await resposta.text();
+
+      const { inicializarMenu } = await import(scriptUrl.href);
+      inicializarMenu(this);
     } catch (erro) {
       console.error("Erro ao carregar o componente:", erro);
       this.innerHTML = `<p style="color: red;">Erro ao carregar componente.</p>`;
