@@ -1,214 +1,225 @@
+/* se quiser mudar uma cor do site inteiro, é só mudar aqui em cima */
 :root {
-  --bg: #eef1f4;              /* fundo da página */
-  --surface: #ffffff;         /* fundo do cartão e dos campos */
-  --ink: #1b2733;             /* cor principal do texto */
-  --muted: #5e6b78;           /* texto secundário: rótulos, subtítulo, ícones */
-  --line: #d9dfe5;            /* bordas */
-  --accent: #151a51;          /* cor do botão (a mesma do botão "Filtrar") */
-  --accent-hover: #2458c4;    /* cor do botão ao passar o mouse */
-  --focus: #1f6feb;           /* contorno de foco (teclado) */
-  --error: #8a2432;           /* mensagens e bordas de erro */
-  --ok: #3f6e52;              /* borda de campo válido */
-  --radius: 8px;              /* arredondamento do cartão (igual ao painel da tabela) */
-  --radius-sm: 6px;           /* arredondamento de campos e botão (igual aos filtros) */
+  --bg: #eef1f4;              /* cor do fundo da página */
+  --surface: #ffffff;         /* cor do cartão e das caixas de digitar */
+  --ink: #1b2733;             /* cor principal dos textos */
+  --muted: #5e6b78;           /* cinza dos textos menos importantes (rótulos, ícones) */
+  --line: #d9dfe5;            /* cor das bordas */
+  --accent: #151a51;          /* cor do botão (azul escuro, igual o botão "Filtrar") */
+  --accent-hover: #2458c4;    /* cor do botão quando passa o mouse */
+  --focus: #1f6feb;           /* azul do contorno quando clica no campo ou usa o teclado */
+  --error: #eb0d0d;           /* vermelho dos erros */
+  --ok: #3f6e52;              /* verde do campo preenchido certinho */
+  --radius: 8px;              /* quanto arredonda o canto do cartão */
+  --radius-sm: 6px;           /* quanto arredonda o canto dos campos e do botão */
   --font: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* a fonte: tenta a Public Sans, se não tiver vai tentando as outras da lista */
 }
 
-/* padding e borda passam a contar dentro da largura declarada */
+/* isso aqui faz o padding e a borda ficarem DENTRO do tamanho da caixa */
+/* senão a caixa cresce e bagunça o layout */
 * {
   box-sizing: border-box;
 }
 
-/* Página: centraliza o login na tela (horizontal e vertical) */
+/* a página toda: deixa o login bem no meio da tela */
 body {
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 1.5;
-  text-align: center;
+  margin: 0;                      /* tira a margem que o navegador coloca sozinho */
+  min-height: 100vh;              /* a página tem no mínimo a altura da tela inteira */
+  display: flex;                  /* liga o flexbox pra conseguir centralizar */
+  align-items: center;            /* centraliza na vertical */
+  justify-content: center;        /* centraliza na horizontal */
+  padding: 24px;                  /* um espacinho nas bordas pro celular não colar */
+  background: var(--bg);          /* cor de fundo (lá das variáveis) */
+  color: var(--ink);              /* cor do texto */
+  font-family: var(--font);       /* a fonte que eu escolhi lá em cima */
+  font-size: 15px;                /* tamanho da letra */
+  line-height: 1.5;               /* espaço entre as linhas */
+  text-align: center;             /* texto centralizado */
 }
 
-/* Contêiner geral: limita a largura do formulário */
+/* caixa que segura tudo, só pra limitar a largura */
 .wrap {
-  width: 100%;
-  max-width: 400px;
+  width: 100%;                    /* ocupa a largura toda... */
+  max-width: 400px;               /* ...mas nunca passa de 400px */
 }
 
-/* Logo */
+/* a caixinha da logo */
 .brand-mark {
-  margin-bottom: 8px;
+  margin-bottom: 8px;             /* um espacinho embaixo da logo */
 }
 
+/* a imagem da logo */
 .brand-mark img {
-  width: 100%;                /* acompanha o contêiner (em vez de 350px fixos) */
-  max-width: 350px;           /* e nunca passa do tamanho original */
-  height: auto;
+  width: 100%;                    /* acompanha a largura da caixa (em vez de 350px fixos) */
+  max-width: 350px;               /* mas nunca fica maior que 350px */
+  height: auto;                   /* a altura se ajusta sozinha pra não amassar a imagem */
 }
 
-/* ===== CARTÃO DO FORMULÁRIO =====
-   Mesmo visual do painel da tabela: fundo branco, borda fina e
-   cantos de 8px. */
+/* ===== CARTÃO DO FORMULÁRIO ===== */
+/* mesmo visual do painel da tabela: fundo branco, borda fina e cantos arredondados */
 .card {
-  padding: 24px 28px;         /* espaço entre a borda e o conteúdo */
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  text-align: left;           /* dentro do cartão, texto à esquerda é mais legível */
+  padding: 24px 28px;             /* espaço entre a borda e o que tem dentro */
+  background: var(--surface);     /* fundo branco */
+  border: 1px solid var(--line);  /* borda fininha cinza */
+  border-radius: var(--radius);   /* canto arredondado */
+  text-align: left;               /* dentro do cartão o texto fica na esquerda, é mais fácil de ler */
 }
 
-/* Título do cartão */
+/* o título (h2) */
 h2 {
-  margin: 0 0 10px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  text-align: center;
+  margin: 0 0 10px;               /* sem margem em cima, 10px embaixo */
+  font-size: 1.5rem;              /* letra grandona */
+  font-weight: 700;               /* negrito */
+  letter-spacing: -0.01em;        /* aproxima um pouquinho as letras */
+  text-align: center;             /* título no meio */
 }
 
-/* Subtítulo */
+/* o subtítulo (se tiver na página) */
 .subtitle {
-  margin: 0 0 24px;
-  color: var(--muted);
-  font-size: 0.95rem;
-  text-align: center;
+  margin: 0 0 24px;               /* espaço embaixo */
+  color: var(--muted);            /* cinza */
+  font-size: 0.95rem;             /* letra um pouco menor */
+  text-align: center;             /* no meio */
 }
 
 /* ===== CAMPOS ===== */
 
-/* Espaço entre cada bloco (rótulo + campo) */
+/* cada bloco (rótulo + caixa + erro) */
 .field {
-  margin-bottom: 8px;
+  margin-bottom: 8px;             /* espaço entre um campo e o outro */
 }
 
-/* Rótulos: mesmo estilo dos rótulos dos filtros */
+/* o textinho em cima da caixa (Nome de usuário, Senha) */
 .field label {
-  display: block;             /* o rótulo ocupa a própria linha, acima do campo */
-  margin-bottom: 6px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--muted);
+  display: block;                 /* faz o texto ocupar a linha toda, ficando em cima da caixa */
+  margin-bottom: 6px;             /* espacinho entre o texto e a caixa */
+  font-size: 0.8125rem;           /* letra pequena */
+  font-weight: 600;               /* meio negrito */
+  color: var(--muted);            /* cinza */
 }
 
-/* .input-shell é a "caixa" que desenha a borda do campo.
-   Ela envolve o <input> e o botão de olho, para os dois parecerem
-   uma peça só. Mesma altura (40px) e borda dos campos da outra tela. */
+/* o input-shell é a caixa que desenha a borda do campo */
+/* ela fica em volta do input e do botão do olho, aí os dois parecem uma coisa só */
 .input-shell {
-  display: flex;
-  align-items: center;
-  height: 40px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  display: flex;                  /* coloca o input e o olho lado a lado */
+  align-items: center;            /* centraliza tudo na vertical */
+  height: 40px;                   /* altura da caixa */
+  background: var(--surface);     /* fundo branco */
+  border: 1px solid var(--line);  /* borda cinza fininha */
+  border-radius: var(--radius-sm);/* canto arredondado */
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  /* a transition faz a borda mudar de cor devagarzinho em vez de pular */
 }
 
-/* Borda um pouco mais escura ao passar o mouse (igual ao select/data) */
+/* quando passa o mouse em cima, a borda escurece um pouquinho */
 .input-shell:hover {
   border-color: #b4bec8;
 }
 
-/* :focus-within = quando o <input> dentro da caixa está em foco, o
-   destaque aparece na caixa toda. Mesmo contorno azul da outra tela. */
+/* focus-within = quando o input lá dentro está sendo usado */
+/* aí a caixa toda ganha o contorno azul */
 .input-shell:focus-within {
-  border-color: var(--focus);
-  box-shadow: 0 0 0 2px var(--focus);
+  border-color: var(--focus);              /* borda azul */
+  box-shadow: 0 0 0 2px var(--focus);      /* uma "sombra" azul de 2px que parece um contorno mais grosso */
 }
 
-/* Classes adicionadas pelo JavaScript no .field para validação */
+/* essas duas classes quem coloca é o JavaScript, na hora de validar */
+/* com erro: borda vermelha */
 .field.error .input-shell {
   border-color: var(--error);
 }
 
+/* certinho: borda verde */
 .field.valid .input-shell {
   border-color: var(--ok);
 }
 
-/* O <input> em si fica sem borda: quem desenha é o .input-shell */
+/* o input de verdade fica sem borda, porque quem faz a borda é o input-shell */
 input {
-  flex: 1;                    /* ocupa todo o espaço livre da caixa */
-  min-width: 0;               /* corrige o bug do flexbox em que o input não encolhe */
-  height: 100%;
-  padding: 0 12px;
-  font: inherit;              /* herda a fonte da página */
-  color: var(--ink);
-  background: transparent;
-  border: none;
-  outline: none;
+  flex: 1;                        /* ocupa todo o espaço que sobrar na caixa */
+  min-width: 0;                   /* conserta um bug do flexbox que não deixava o input encolher */
+  height: 100%;                   /* mesma altura da caixa */
+  padding: 0 12px;                /* espaço nas laterais pro texto não colar na borda */
+  font: inherit;                  /* usa a mesma fonte do resto da página */
+  color: var(--ink);              /* cor do texto digitado */
+  background: transparent;        /* fundo transparente (aparece o branco da caixa) */
+  border: none;                   /* tira a borda padrão do navegador */
+  outline: none;                  /* tira o contorno padrão ao clicar (o input-shell já faz o dele) */
 }
 
-/* Botão de olho (mostrar/ocultar senha) */
+/* o botão do olho (mostrar/esconder senha) */
 .toggle-pass {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  padding: 0 12px;
-  color: var(--muted);
-  background: transparent;
-  border: none;
-  cursor: pointer;
+  display: flex;                  /* flex pra centralizar o desenho dentro do botão */
+  align-items: center;            /* centraliza na vertical */
+  height: 100%;                   /* mesma altura da caixa */
+  padding: 0 12px;                /* espaço nas laterais */
+  color: var(--muted);            /* o olho começa cinza */
+  background: transparent;        /* sem fundo */
+  border: none;                   /* sem borda */
+  cursor: pointer;                /* o mouse vira a mãozinha */
 }
 
+/* quando passa o mouse no olho, ele fica azul escuro */
 .toggle-pass:hover {
   color: var(--accent);
 }
 
-/* Contorno de foco do botão de olho na navegação por teclado */
+/* contorno quando chega no botão usando o teclado (Tab) */
 .toggle-pass:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: -2px;
-  border-radius: var(--radius-sm);
+  outline: 2px solid var(--focus);  /* contorno azul */
+  outline-offset: -2px;             /* joga o contorno pra dentro do botão */
+  border-radius: var(--radius-sm);  /* arredonda o contorno */
 }
 
 /* ===== MENSAGENS ===== */
 
-/* Texto de erro/ajuda embaixo de cada campo */
+/* a mensagem de erro que fica embaixo de cada campo */
 .hint {
-  min-height: 16px;           /* reserva espaço para a tela não "pular" quando o erro aparece */
-  margin-top: 5px;
-  font-size: 0.8rem;
-  color: var(--error);
+  min-height: 16px;               /* guarda um espaço mesmo vazio, senão a tela "pula" quando o erro aparece */
+  margin-top: 5px;                /* espacinho em cima */
+  font-size: 0.8rem;              /* letra pequena */
+  color: var(--error);            /* vermelho */
 }
 
-/* Aviso de "Caps Lock ativado": escondido até o JS adicionar .show */
+/* o aviso de "Caps Lock ativado" */
+/* fica escondido até o JavaScript colocar a classe .show */
 .caps-note {
-  display: none;
-  margin: -20px 0 30px;
-  font-size: 0.78rem;
-  color: var(--error);
+  display: none;                  /* escondido */
+  margin: -20px 0 30px;           /* o -20px puxa o aviso pra cima, pra ficar grudado na senha */
+  font-size: 0.78rem;             /* letra pequena */
+  color: var(--error);            /* vermelho */
+  font-weight: bold               /* negrito */
 }
 
+/* quando o JS coloca o .show, o aviso aparece */
 .caps-note.show {
   display: block;
 }
 
-/* ===== BOTÃO ENTRAR =====
-   Mesma cor, altura, raio e hover do botão "Filtrar". */
+/* ===== BOTÃO ENTRAR ===== */
+/* mesma cor, altura e hover do botão "Filtrar" da outra tela */
 button[type="submit"] {
-  width: 100%;
-  height: 40px;
-  padding: 0 24px;
-  font: inherit;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  border: 0;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background 0.15s;
+  width: 100%;                    /* botão ocupa a largura toda */
+  height: 40px;                   /* altura igual a das caixas */
+  padding: 0 24px;                /* espaço nas laterais */
+  font: inherit;                  /* usa a fonte da página */
+  font-weight: 600;               /* meio negrito */
+  color: #fff;                    /* letra branca */
+  background: var(--accent);      /* fundo azul escuro */
+  border: 0;                      /* sem borda */
+  border-radius: var(--radius-sm);/* canto arredondado */
+  cursor: pointer;                /* mãozinha ao passar o mouse */
+  transition: background 0.15s;   /* a cor muda devagarzinho no hover */
 }
 
+/* quando passa o mouse, o botão fica azul mais claro */
 button[type="submit"]:hover {
   background: var(--accent-hover);
 }
 
+/* contorno azul quando chega no botão pelo teclado */
 button[type="submit"]:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
+  outline: 2px solid var(--focus);  /* contorno azul */
+  outline-offset: 2px;              /* afasta o contorno 2px do botão */
 }

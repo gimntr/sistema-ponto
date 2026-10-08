@@ -240,4 +240,5 @@
     // ===== AO ABRIR A PÁGINA =====
     preencherColaboradores();
     aplicarFiltros();
+
 })();
