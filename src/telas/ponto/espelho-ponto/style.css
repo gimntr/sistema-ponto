@@ -44,7 +44,7 @@ body {
 .wrap {
     max-width: 1080px;           /* nunca fica mais larga que isso */
     margin: 0 auto;              /* "auto" nas laterais centraliza */
-    padding: 56px 24px 56px;     /* espaço: topo | laterais | embaixo */
+    padding: 56px 24px;     /* espaço: topo | laterais | embaixo */
 }
 
 /* Cabeçalho (onde fica o título) */

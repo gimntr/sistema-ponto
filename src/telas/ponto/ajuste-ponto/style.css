@@ -1,25 +1,43 @@
 :root {
-    --bg: #eef1f4;           /* fundo cinza clarinho da página */
-    --surface: #ffffff;      /* branco: caixas, campos e linhas */
-    --ink: #1b2733;          /* cor do texto principal */
-    --muted: #5e6b78;        /* cinza do texto menos importante */
-    --line: #d9dfe5;         /* cor das bordinhas */
-    --row-hover: #f5f8fa;    /* cor da linha quando passo o mouse */
-    --accent: #151a51;       /* azul escuro dos botões */
-    --accent-hover: #2458c4; /* azul mais claro quando passo o mouse no botão */
-    --accent-soft: #dff0f1;  /* fundo clarinho do ícone no hover */
-    --focus: #1f6feb;        /* contorno azul de quando uso o Tab */
-    --header-bg: #f7f9fb;    /* fundo do cabeçalho da tabela */
-    --footer-bg: #151a51;    /* fundo da faixa do total */
-    --footer-ink: #ffffff;   /* texto branco do total */
+    --bg: #eef1f4;
+    /* fundo cinza clarinho da página */
+    --surface: #ffffff;
+    /* branco: caixas, campos e linhas */
+    --ink: #1b2733;
+    /* cor do texto principal */
+    --muted: #5e6b78;
+    /* cinza do texto menos importante */
+    --line: #d9dfe5;
+    /* cor das bordinhas */
+    --row-hover: #f5f8fa;
+    /* cor da linha quando passo o mouse */
+    --accent: #151a51;
+    /* azul escuro dos botões */
+    --accent-hover: #2458c4;
+    /* azul mais claro quando passo o mouse no botão */
+    --accent-soft: #dff0f1;
+    /* fundo clarinho do ícone no hover */
+    --focus: #1f6feb;
+    /* contorno azul de quando uso o Tab */
+    --header-bg: #f7f9fb;
+    /* fundo do cabeçalho da tabela */
+    --footer-bg: #151a51;
+    /* fundo da faixa do total */
+    --footer-ink: #ffffff;
+    /* texto branco do total */
 
     /* NOVO: cores das linhas aprovadas e reprovadas */
-    --ok-bg: #e8f6ed;        /* verde clarinho (aprovado) */
-    --ok-ink: #1d7a3e;       /* verde do ícone de aprovar */
-    --bad-bg: #fdeceb;       /* vermelho clarinho (reprovado) */
-    --bad-ink: #c0392b;      /* vermelho do ícone de reprovar */
+    --ok-bg: #e8f6ed;
+    /* verde clarinho (aprovado) */
+    --ok-ink: #1d7a3e;
+    /* verde do ícone de aprovar */
+    --bad-bg: #fdeceb;
+    /* vermelho clarinho (reprovado) */
+    --bad-ink: #c0392b;
+    /* vermelho do ícone de reprovar */
 
-    --radius: 8px;           /* o quanto os cantos são arredondados */
+    --radius: 8px;
+    /* o quanto os cantos são arredondados */
 
     /* fonte do site. Se a primeira não carregar, usa a próxima */
     --font: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -33,12 +51,14 @@
 
 /* Estilo geral da página */
 body {
-    margin: 0;                   /* tira a margem que o navegador coloca sozinho */
+    margin: 0;
+    /* tira a margem que o navegador coloca sozinho */
     background: var(--bg);
     color: var(--ink);
     font-family: var(--font);
     font-size: 15px;
-    line-height: 1.5;            /* espaço entre as linhas de texto */
+    line-height: 1.5;
+    /* espaço entre as linhas de texto */
 }
 
 
@@ -55,9 +75,12 @@ my-menu {
 
 /* Caixa que segura o conteúdo todo no meio da tela */
 .wrap {
-    max-width: 1080px;           /* nunca fica mais larga que isso */
-    margin: 0 auto;              /* "auto" nas laterais centraliza */
-    padding: 56px 24px;          /* espaço: topo/embaixo | laterais */
+    max-width: 1080px;
+    /* nunca fica mais larga que isso */
+    margin: 0 auto;
+    /* "auto" nas laterais centraliza */
+    padding: 56px 24px;
+    /* espaço: topo/embaixo | laterais */
 }
 
 /* Cabeçalho (onde fica o título) */
@@ -67,10 +90,13 @@ header {
 
 /* Título "Ajuste de ponto" */
 h1 {
-    margin: 0;                   /* CORRIGIDO: era "margin: 20" sem unidade, o navegador ignorava */
+    margin: 20;
+    /* CORRIGIDO: era "margin: 20" sem unidade, o navegador ignorava */
     font-size: 1.75rem;
-    font-weight: 700;            /* negrito */
-    letter-spacing: -0.01em;     /* aproxima um pouquinho as letras */
+    font-weight: 700;
+    /* negrito */
+    letter-spacing: -0.01em;
+    /* aproxima um pouquinho as letras */
 }
 
 
@@ -80,10 +106,14 @@ h1 {
 
 /* O formulário dos filtros */
 .filters {
-    display: flex;               /* coloca os campos lado a lado */
-    flex-wrap: wrap;             /* se não couber, joga pra linha de baixo */
-    align-items: flex-end;       /* alinha tudo pela parte de baixo */
-    gap: 16px;                   /* espaço entre os campos */
+    display: flex;
+    /* coloca os campos lado a lado */
+    flex-wrap: wrap;
+    /* se não couber, joga pra linha de baixo */
+    align-items: flex-end;
+    /* alinha tudo pela parte de baixo */
+    gap: 16px;
+    /* espaço entre os campos */
     margin-bottom: 20px;
     padding: 16px 20px;
     background: var(--surface);
@@ -94,7 +124,8 @@ h1 {
 /* Cada campo: texto em cima, caixinha embaixo */
 .field {
     display: flex;
-    flex-direction: column;      /* um embaixo do outro */
+    flex-direction: column;
+    /* um embaixo do outro */
     gap: 6px;
 }
 
@@ -115,7 +146,8 @@ select,
 input[type="date"] {
     height: 40px;
     padding: 0 12px;
-    font: inherit;               /* usa a mesma fonte da página */
+    font: inherit;
+    /* usa a mesma fonte da página */
     color: var(--ink);
     background: var(--surface);
     border: 1px solid var(--line);
@@ -136,10 +168,13 @@ input[type="date"]:hover {
     font-weight: 600;
     color: #fff;
     background: var(--accent);
-    border: 0;                   /* tira a borda cinza padrão */
+    border: 0;
+    /* tira a borda cinza padrão */
     border-radius: 6px;
-    cursor: pointer;             /* vira mãozinha ao passar o mouse */
-    transition: background 0.15s; /* a troca de cor fica suave */
+    cursor: pointer;
+    /* vira mãozinha ao passar o mouse */
+    transition: background 0.15s;
+    /* a troca de cor fica suave */
 }
 
 /* Botão fica azul mais claro quando passo o mouse */
@@ -154,7 +189,8 @@ input:focus-visible,
 .apply:focus-visible,
 .acoes .material-symbols-outlined:focus-visible {
     outline: 2px solid var(--focus);
-    outline-offset: 2px;         /* afasta o contorno do elemento */
+    outline-offset: 2px;
+    /* afasta o contorno do elemento */
 }
 
 
@@ -184,14 +220,16 @@ input:focus-visible,
 
 /* Cabeçalho da tabela (Colaborador, Data, Entrada...) */
 th {
-    padding: 14px 12px;          /* diminuí de 16 pra 12 porque agora são 8 colunas */
+    padding: 14px 12px;
+    /* diminuí de 16 pra 12 porque agora são 8 colunas */
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--muted);
     text-align: center;
     background: var(--header-bg);
     border-bottom: 1px solid var(--line);
-    white-space: nowrap;         /* não deixa o título quebrar em 2 linhas */
+    white-space: nowrap;
+    /* não deixa o título quebrar em 2 linhas */
 }
 
 /* Células das linhas (as que o JavaScript cria) */
@@ -278,10 +316,7 @@ td.total {
     background: var(--bad-bg);
 }
 
-
-/* =====================================================
-   6) RODAPÉ (total do período)
-   ===================================================== */
+/* RODAPÉ (total do período) */
 
 /* Faixa escura do total */
 tfoot td {
@@ -306,9 +341,7 @@ tfoot .total-value {
 }
 
 
-/* =====================================================
-   7) AVISO DE "NENHUM REGISTRO"
-   ===================================================== */
+/* AVISO DE "NENHUM REGISTRO */
 .empty-state {
     padding: 40px 16px;
     text-align: center;
@@ -316,12 +349,7 @@ tfoot .total-value {
 }
 
 
-/* =====================================================
-   8) CELULAR (telas de até 720px)
-   Tudo aqui dentro só vale em tela pequena.
-   Cada linha da tabela vira um "cartãozinho".
-   ATENÇÃO: não colocar nada da janelinha (modal) aqui dentro!
-   ===================================================== */
+/* CELULAR */
 @media (max-width: 720px) {
 
     /* menos espaço nas bordas */
@@ -372,7 +400,8 @@ tfoot .total-value {
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: var(--radius);
-        overflow: hidden;        /* o conteúdo respeita o canto arredondado */
+        overflow: hidden;
+        /* o conteúdo respeita o canto arredondado */
     }
 
     /* NOVO: as cores de aprovado/reprovado também valem nos cartões.
@@ -448,28 +477,29 @@ tfoot .total-value {
 }
 
 
-/* =====================================================
-   9) JANELINHA DE EDITAR (modal)
-   Esses estilos ficam FORA do @media de propósito.
-   Obs.: o HTML atual não tem o <dialog id="modalEditar">,
-   então isso aqui só vai funcionar se você adicionar ele de novo.
-   ===================================================== */
+/*  JANELINHA DE EDITAR */
 
 /* A caixa da janelinha */
 dialog#modalEditar {
-    width: 92%;                      /* no celular ocupa quase a tela toda */
-    max-width: 500px;                /* tamanho do form "Editar registro" */
-    padding: 32px;                   /* espaço entre a borda e o conteúdo */
-    border: 1px solid var(--line);   /* troca a borda preta grossa por uma fininha */
+    width: 92%;
+    /* no celular ocupa quase a tela toda */
+    max-width: 500px;
+    /* tamanho do form "Editar registro" */
+    padding: 32px;
+    /* espaço entre a borda e o conteúdo */
+    border: 1px solid var(--line);
+    /* troca a borda preta grossa por uma fininha */
     border-radius: var(--radius);
     background: var(--surface);
     color: var(--ink);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);  /* sombra em volta */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    /* sombra em volta */
 }
 
 /* O fundo escuro que aparece atrás da janelinha */
 dialog#modalEditar::backdrop {
-    background: rgba(0, 0, 0, 0.45); /* preto com 45% de força */
+    background: rgba(0, 0, 0, 0.45);
+    /* preto com 45% de força */
 }
 
 /* Título "Editar registro" */
@@ -481,8 +511,10 @@ dialog#modalEditar h2 {
 /* Os 4 campos organizados em 2 colunas */
 .campos-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;  /* duas colunas do mesmo tamanho */
-    gap: 16px 20px;                  /* espaço entre linhas | entre colunas */
+    grid-template-columns: 1fr 1fr;
+    /* duas colunas do mesmo tamanho */
+    gap: 16px 20px;
+    /* espaço entre linhas | entre colunas */
 }
 
 /* Cada campo: texto em cima, horário embaixo */
@@ -545,6 +577,7 @@ dialog#modalEditar h2 {
 /* No celular os campos da janelinha ficam um embaixo do outro */
 @media (max-width: 720px) {
     .campos-grid {
-        grid-template-columns: 1fr;  /* uma coluna só */
+        grid-template-columns: 1fr;
+        /* uma coluna só */
     }
 }
