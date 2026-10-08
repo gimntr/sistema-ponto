@@ -3,12 +3,13 @@
 <html lang="pt-BR">
 
 <!-- o <head> é a parte que o usuário não vê: título, estilos, scripts... -->
+
 <head>
   <!-- isso faz os acentos aparecerem certo (sem isso vira caractere estranho) -->
   <meta charset="UTF-8">
 
-  <!-- isso deixa a página responsiva-->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- isso deixa a página responsiva (se adapta ao celular) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
   <!-- título que aparece na aba do navegador -->
   <title>Ajuste de ponto</title>
@@ -16,7 +17,7 @@
   <!-- fonte Public Sans (a que o CSS usa). Se não carregar, o CSS usa outra -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap">
 
-  <!-- fonte dos ícones (o check e o close das ações).-->
+  <!-- fonte dos ícones (o check e o close das ações) -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
 
   <!-- meu arquivo de estilo (cores, tabela, etc) -->
@@ -27,13 +28,18 @@
   <script src="../components/menu/script.js" defer></script>
   <script type="module" src="../components/menu/generate-component.js"></script>
 
-  <!-- meu script principal, que faz os botões funcionarem.
-       Antes ele estava repetido, agora só aqui -->
+  <!-- meu script principal, que faz os botões funcionarem -->
   <script src="script.js" defer></script>
 </head>
 
 <!-- o <body> é tudo que aparece na tela -->
+
 <body>
+
+  <!-- CORRIGIDO: o <my-menu> estava DENTRO do formulário de filtros.
+       Isso espremia o menu dentro da caixa branca e ele aparecia cortado.
+       Agora ele fica aqui em cima, fora do .wrap e fora do form. -->
+  <my-menu></my-menu>
 
   <!-- caixa principal: centraliza e limita a largura (a classe "wrap" está no CSS) -->
   <div class="wrap">
@@ -58,13 +64,8 @@
         </select>
       </div>
 
-      <!-- o menu personalizado. Se der erro de "MeuMenu is not defined",
-           o problema está nos arquivos do menu, não aqui -->
-      <my-menu></my-menu>
-
       <!-- campo 2: data de início -->
       <div class="field">
-        <!-- aqui estava "mesInicio", mas o id do campo é "dataInicio". Corrigi -->
         <label for="dataInicio">De</label>
         <input type="date" id="dataInicio" name="dataInicio">
       </div>
@@ -103,15 +104,33 @@
              O JavaScript cria as linhas aqui dentro usando o id "tableBody" -->
         <tbody id="tableBody"></tbody>
 
-        <!-- rodapé da tabela: total de horas do período -->
+        <!-- rodapé da tabela: total de horas do período.
+             Ele também tem 8 células, uma pra cada coluna -->
         <tfoot>
           <tr>
-            <!-- texto "Total do período" na primeira coluna -->
+            <!-- coluna 1 (Colaborador): o texto "Total do período" -->
             <td class="total-label" data-label="">Total do período</td>
 
-            <!-- células vazias só pra ocupar o lugar das colunas do meio
-                 (Data, Entrada, Saída intervalo, Retorno intervalo, Saída) -->
+            <!-- colunas 2 a 6 (Data, Entrada, Saída intervalo, Retorno intervalo, Saída):
+                 células vazias só pra ocupar o lugar -->
             <td data-label=""></td>
             <td data-label=""></td>
             <td data-label=""></td>
-            <td
+            <td data-label=""></td>
+            <td data-label=""></td>
+
+            <!-- coluna 7 (Horas trabalhadas): aqui aparece o total.
+                 CORRIGIDO: o id agora é "totalPeriodo", igual ao que o script.js procura.
+                 Antes não tinha esse id, então o JS não achava a célula e o total nunca aparecia -->
+            <td class="total-value" id="totalPeriodo" data-label="Total">00:00</td>
+
+            <!-- coluna 8 (Ações): vazia -->
+            <td data-label=""></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</body>
+
+</html>
