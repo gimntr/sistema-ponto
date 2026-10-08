@@ -162,6 +162,7 @@ function renderizarTabela(lista) {
     td.textContent = "Nenhum registro encontrado para o período.";
     tr.appendChild(td);
     tableBody.appendChild(tr);
+    console.log(totalPeriodo, totalPeriodo);
     totalPeriodo.textContent = "00:00";
     return;
   }
@@ -177,13 +178,12 @@ function renderizarTabela(lista) {
 }
 
 
-/* =====================================================================
-   8) FILTRAR
+/*
+   FILTRAR
    Lê os valores dos campos e devolve só os registros que combinam.
    - Campo vazio = aquele filtro não é aplicado.
    - Datas no formato AAAA-MM-DD podem ser comparadas como texto
-     (">=" e "<=") e a ordem fica correta.
-   ===================================================================== */
+     (">=" e "<=") e a ordem fica correta. */
 function filtrarRegistros() {
   const colab = selectColab.value;
   const inicio = inputInicio.value;
