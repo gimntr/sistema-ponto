@@ -1,58 +1,91 @@
 <!DOCTYPE html>
+<!-- avisa o navegador que é HTML5 e que o idioma é português do Brasil -->
 <html lang="pt-BR">
-<link rel="stylesheet" href="style.css">
- <script src="script.js" defer></script>
+
+<!-- o <head> é a parte que o usuário não vê: título, estilos, scripts... -->
+<head>
+  <!-- isso faz os acentos aparecerem certo (sem isso vira caractere estranho) -->
+  <meta charset="UTF-8">
+
+  <!-- isso deixa a página responsiva-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- título que aparece na aba do navegador -->
+  <title>Ajuste de ponto</title>
+
+  <!-- fonte Public Sans (a que o CSS usa). Se não carregar, o CSS usa outra -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap">
+
+  <!-- fonte dos ícones (o check e o close das ações).-->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+
+  <!-- meu arquivo de estilo (cores, tabela, etc) -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- scripts do menu <my-menu>.
+       O "defer" faz o script esperar a página carregar antes de rodar -->
   <script src="../components/menu/script.js" defer></script>
-   <script src="../components/menu/generate-component.js" defer></script>
- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=check" />
- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <script type="module" src="../components/menu/generate-component.js"></script>
 
+  <!-- meu script principal, que faz os botões funcionarem.
+       Antes ele estava repetido, agora só aqui -->
+  <script src="script.js" defer></script>
+</head>
 
+<!-- o <body> é tudo que aparece na tela -->
 <body>
-  <!-- Container principal: centraliza e limita a largura do conteúdo (definido no CSS pela classe "wrap") -->
+
+  <!-- caixa principal: centraliza e limita a largura (a classe "wrap" está no CSS) -->
   <div class="wrap">
 
-    <!-- Cabeçalho da página com o título -->
+    <!-- cabeçalho da página, só o título -->
     <header>
       <h1>Ajuste de ponto</h1>
     </header>
 
-    <!-- Formulário de filtros: o usuário escolhe colaborador e período.
-         O id "filterForm" permite que o JavaScript capture o evento de envio (submit) -->
+    <!-- formulário dos filtros: colaborador e período.
+         o id "filterForm" é como o JavaScript acha ele -->
     <form class="filters" id="filterForm">
 
-      <!-- Campo 1: seleção do colaborador -->
+      <!-- campo 1: escolher o colaborador -->
       <div class="field">
+        <!-- o "for" tem que ser igual ao id do campo, assim clicar no texto seleciona o campo -->
         <label for="colaborador">Colaborador</label>
-        <!-- O <select> começa só com "Selecione". As demais opções
-              serão adicionadas pelo JavaScript -->
+
+        <!-- o JavaScript apaga isso e coloca "Todos" + os nomes -->
         <select id="colaborador" name="colaborador">
-          <option>Selecione</option>
+          <option value="">Selecione</option>
         </select>
       </div>
-       <my-menu></my-menu>
-      <!-- Campo 2: data inicial do período -->
+
+      <!-- o menu personalizado. Se der erro de "MeuMenu is not defined",
+           o problema está nos arquivos do menu, não aqui -->
+      <my-menu></my-menu>
+
+      <!-- campo 2: data de início -->
       <div class="field">
-        <label for="mesInicio">De</label>
+        <!-- aqui estava "mesInicio", mas o id do campo é "dataInicio". Corrigi -->
+        <label for="dataInicio">De</label>
         <input type="date" id="dataInicio" name="dataInicio">
       </div>
 
-      <!-- Campo 3: data final do período -->
+      <!-- campo 3: data final -->
       <div class="field">
         <label for="dataFim">Até</label>
         <input type="date" id="dataFim" name="dataFim">
       </div>
 
-      <!-- Botão que envia o formulário (dispara o evento "submit" para o JS filtrar os dados) -->
+      <!-- botão de filtrar. Como é type="submit", ele envia o formulário
+           e o JavaScript escuta esse envio pra filtrar a tabela -->
       <button type="submit" class="apply">Filtrar</button>
     </form>
 
-    <!-- Painel que contém a tabela de registros de ponto -->
+    <!-- caixa que envolve a tabela (no celular ela vira cartões) -->
     <div class="table-panel">
       <table class="table-width">
 
-        <!-- Cabeçalho da tabela: nomes das colunas -->
+        <!-- cabeçalho da tabela: o nome de cada coluna.
+             São 8 colunas, o mesmo número do TOTAL_COLUNAS no script.js -->
         <thead>
           <tr>
             <th>Colaborador</th>
@@ -66,21 +99,19 @@
           </tr>
         </thead>
 
-        <!-- Corpo da tabela: começa vazio. O JavaScript vai criar as linhas
-             (<tr>) aqui dentro usando o id "tableBody" -->
+        <!-- corpo da tabela: fica vazio de propósito!
+             O JavaScript cria as linhas aqui dentro usando o id "tableBody" -->
         <tbody id="tableBody"></tbody>
 
-        <!-- Rodapé da tabela: mostra o total de horas do período -->
+        <!-- rodapé da tabela: total de horas do período -->
         <tfoot>
           <tr>
-            <!-- Rótulo "Total do período" na primeira coluna -->
+            <!-- texto "Total do período" na primeira coluna -->
             <td class="total-label" data-label="">Total do período</td>
-            <!-- Células vazias para alinhar com as colunas Data, Entrada,
-                 Saída intervalo e Retorno intervalo -->
-            <td 
-  <script src="script.js" defer></script>
-    <script
-      type="module"
-      src="../components/menu/generate-component.js"
-    ></script>
-          </body>
+
+            <!-- células vazias só pra ocupar o lugar das colunas do meio
+                 (Data, Entrada, Saída intervalo, Retorno intervalo, Saída) -->
+            <td data-label=""></td>
+            <td data-label=""></td>
+            <td data-label=""></td>
+            <td

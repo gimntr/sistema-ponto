@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Espelho de ponto</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href=".../components/menu/generate-component.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <!-- Só UM script, como module (necessário por causa do import) -->
 </head>
@@ -75,6 +76,36 @@
   </div>
   <script src="script.js" defer></script>
   <script type="module" src="../components/menu/generate-component.js"></script>
+  <dialog id="modalEditar">
+  <form id="formEditar">
+    <h2>Editar registro</h2>
+
+    <div class="campo-edicao">
+      <label for="editEntrada">Entrada</label>
+      <input type="time" id="editEntrada" required>
+    </div>
+
+    <div class="campo-edicao">
+      <label for="editSaidaAlmoco">Saída almoço</label>
+      <input type="time" id="editSaidaAlmoco" required>
+    </div>
+
+    <div class="campo-edicao">
+      <label for="editRetornoAlmoco">Retorno almoço</label>
+      <input type="time" id="editRetornoAlmoco" required>
+    </div>
+
+    <div class="campo-edicao">
+      <label for="editSaida">Saída</label>
+      <input type="time" id="editSaida" required>
+    </div>
+
+    <div class="botoes-edicao">
+      <button type="button" id="btnCancelar" class="btn-cancelar">Cancelar</button>
+      <button type="submit" class="apply">Salvar</button>
+    </div>
+  </form>
+</dialog>
 </body>
 
 </html>

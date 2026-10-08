@@ -1,146 +1,114 @@
+// aqui eu pego cada elemento pelo id que está no HTML
+// e guardo em uma variável pra usar depois
+const clock = document.getElementById('clock');       // o relógio 00:00:00
+const dateEl = document.getElementById('date');       // o texto da data
+const punchBtn = document.getElementById('punchBtn'); // o botão "Registrar ponto"
+const statusEl = document.getElementById('status');   // a mensagem embaixo do botão
+const empty = document.getElementById('empty');       // o texto "Nenhum registro ainda hoje."
+const logList = document.getElementById('logList');   // a lista (ul) dos registros
 
-// Dados de exemplo — substitua pelos lançamentos reais vindos do seu backend/API.
-// Cada registro representa um dia com os 4 horários batidos pelo colaborador.
-const registros = [
-    { id_linha: 1, colaborador: 'Ana Souza', data: '2026-09-15', entrada: '08:02', saidaAlmoco: '12:00', retornoAlmoco: '13:01', saida: '17:58' },
-    { id_linha: 2, colaborador: 'Ana Souza', data: '2026-09-16', entrada: '08:05', saidaAlmoco: '12:03', retornoAlmoco: '13:00', saida: '18:10' },
-    { id_linha: 3, colaborador: 'Ana Souza', data: '2026-09-17', entrada: '07:59', saidaAlmoco: '12:01', retornoAlmoco: '12:58', saida: '17:55' },
-    { id_linha: 4, colaborador: 'Ana Souza', data: '2026-09-18', entrada: '08:10', saidaAlmoco: '12:05', retornoAlmoco: '13:05', saida: '18:02' },
-    { id_linha: 5, colaborador: 'Ana Souza', data: '2026-09-19', entrada: '08:00', saidaAlmoco: '12:00', retornoAlmoco: '13:00', saida: '17:30' },
-    { id_linha: 6, colaborador: 'Bruno Lima', data: '2026-09-15', entrada: '08:30', saidaAlmoco: '12:15', retornoAlmoco: '13:15', saida: '18:00' },
-    { id_linha: 7, colaborador: 'Bruno Lima', data: '2026-09-16', entrada: '08:28', saidaAlmoco: '12:10', retornoAlmoco: '13:12', saida: '18:05' },
-    { id_linha: 8, colaborador: 'Bruno Lima', data: '2026-09-17', entrada: '08:35', saidaAlmoco: '12:20', retornoAlmoco: '13:10', saida: '17:50' },
-    { id_linha: 9, colaborador: 'Carla Mendes', data: '2026-09-15', entrada: '09:00', saidaAlmoco: '13:00', retornoAlmoco: '14:00', saida: '18:30' },
-    { id_linha: 10, colaborador: 'Carla Mendes', data: '2026-09-16', entrada: '08:55', saidaAlmoco: '12:58', retornoAlmoco: '14:02', saida: '18:20' }
-];
+// lista com o nome de cada batida do dia, na ordem certa
+// 1ª vez que clica = Entrada, 2ª = Saída almoço, e assim vai
+const tiposDePonto = ['Entrada', 'Saída almoço', 'Retorno almoço', 'Saída'];
 
-const form = document.getElementById('filterForm');
-const tableBody = document.getElementById('tableBody');
-const tfootTotal = document.getElementById('tfootTotal');
-const emptyState = document.getElementById('emptyState');
-const colaboradorSelect = document.getElementById('colaborador');
+// contador pra saber quantas vezes já bateu o ponto hoje
+// começa em 0 porque ainda não bateu nenhum
+let totalRegistros = 0;
 
-// 1. Pega só os nomes, sem repetir
-const nomesUnicos = [];
-for (const registro of registros) {
-    //Verifica se o nome já existe na lista
-    if (nomesUnicos.includes(registro.colaborador) == false) {
-        //Se não existir adiciona
-        nomesUnicos.push(registro.colaborador);
+// se o número for 5 vira "05", se for 12 continua "12"
+// String() transforma o número em texto, padStart completa com zero até ter 2 dígitos
+function doisDigitos(numero) {
+    return String(numero).padStart(2, '0');
+}
+
+// devolve a hora no formato "HH:MM:SS"
+function pegarHoraAtual() {
+    const agora = new Date(); // pega a data e hora de agora
+
+    const horas = doisDigitos(agora.getHours());       // horas
+    const minutos = doisDigitos(agora.getMinutes());   // minutos
+    const segundos = doisDigitos(agora.getSeconds());  // segundos
+
+    // junta tudo separado por dois pontos
+    return `${horas}:${minutos}:${segundos}`;
+}
+
+function atualizarRelogio() {
+    const agora = new Date();
+
+    const horas = doisDigitos(agora.getHours());
+    const minutos = doisDigitos(agora.getMinutes());
+    const segundos = doisDigitos(agora.getSeconds());
+
+    // aqui uso innerHTML (e não textContent) porque quero manter
+    // o <span class="colon"> nos dois pontos, senão perde o estilo do CSS
+    clock.innerHTML = `${horas}<span class="colon">:</span>${minutos}<span class="colon">:</span>${segundos}`;
+}
+
+function atualizarData() {
+    const hoje = new Date();
+
+    // toLocaleDateString escreve a data por extenso em português
+    // ex: "Quinta-feira, 8 de Outubro de 2026"
+    // o CSS já deixa a primeira letra maiúscula (text-transform: capitalize)
+    dateEl.textContent = hoje.toLocaleDateString('pt-BR', {
+        weekday: 'long',  // dia da semana
+        day: 'numeric',   // número do dia
+        month: 'long',    // nome do mês
+        year: 'numeric'   // ano
+    });
+}
+
+// essa função roda toda vez que o usuário clica no botão
+function registrarPonto() {
+    // se já bateu os 4 pontos do dia, não deixa bater mais
+    if (totalRegistros >= tiposDePonto.length) {
+        statusEl.textContent = 'Você já registrou todos os pontos de hoje.';
+        return; // sai da função aqui
+    }
+
+    // descobre qual é o tipo desse ponto usando o contador como posição na lista
+    // (posição 0 = Entrada, 1 = Saída almoço...)
+    const tipo = tiposDePonto[totalRegistros];
+
+    // pega a hora exata do clique
+    const hora = pegarHoraAtual();
+
+    // cria um item novo da lista (<li>)
+    const item = document.createElement('li');
+
+    // coloca o tipo e a hora dentro do item
+    // o CSS já separa um de cada lado (justify-content: space-between)
+    item.innerHTML = `<span>${tipo}</span><span>${hora}</span>`;
+
+    // prepend coloca o item no começo da lista
+    // assim o registro mais recente fica sempre no topo
+    logList.prepend(item);
+
+    // some com o texto "Nenhum registro ainda hoje."
+    // hidden = true esconde o elemento
+    empty.hidden = true;
+
+    // mostra a mensagem de confirmação embaixo do botão
+    statusEl.textContent = `${tipo} registrada às ${hora}`;
+
+    // soma 1 no contador, porque acabou de bater mais um ponto
+    totalRegistros++;
+
+    // se chegou nos 4 pontos, desativa o botão pra não clicar mais
+    if (totalRegistros === tiposDePonto.length) {
+        punchBtn.disabled = true;
     }
 }
 
-// 2. Ordena em ordem alfabética
-nomesUnicos.sort();
+// quando clicar no botão, chama a função registrarPonto
+punchBtn.addEventListener('click', registrarPonto);
 
-// 3. Cria uma <option> para cada nome
-for (const nome of nomesUnicos) {
-    const opt = document.createElement('option');
-    opt.value = nome;
-    opt.textContent = nome;
+// chama as duas uma vez logo de cara
+// senão ficaria "00:00:00" e "carregando data..." por 1 segundo
+atualizarRelogio();
+atualizarData();
 
-}
-
-function paraMinutos(hhmm) {
-    const [h, m] = hhmm.split(':').map(Number);
-    return h * 60 + m;
-}
-function paraHHMM(minutosTotais) {
-    const sinal = minutosTotais < 0 ? '-' : '';
-    const abs = Math.abs(minutosTotais);
-    const h = Math.floor(abs / 60);
-    const m = abs % 60;
-    return `${sinal}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
-
-function horasTrabalhadasMin(r) {
-    const manha = paraMinutos(r.saidaAlmoco) - paraMinutos(r.entrada);
-    const tarde = paraMinutos(r.saida) - paraMinutos(r.retornoAlmoco);
-    return manha + tarde;
-}
-
-function formatarData(iso) {
-    const [ano, mes, dia] = iso.split('-');
-    return `${dia}/${mes}/${ano}`;
-}
-
-function carregarListaTela(lista) {
-    /*Limpa tudo que existe dentro da table principal da tela definida na variavel
-    const tableBody = document.getElementById('tableBody') */
-    tableBody.innerHTML = '';
-    const btnAbrir = this.querySelector(/* seletor do botão ☰ */);
-    const menu = this.querySelector(/* seletor da nav */);
-    const btnFechar = this.querySelector(/* seletor do botão ← */);
-
-    btnAbrir.addEventListener("click", () => {
-        menu.classList.generate-component.js("aberto");
-    });
-
-    btnFechar.addEventListener("click", () => {
-        menu.classList.generate-component.js("aberto");
-    });
-/*Verifica se a lista recebida pelo parâmetro está vazia para retornar
-alguma mensagem ou tratamento de que não foram encontrados registros*/
-if (lista.length === 0) {
-    emptyState.style.display = 'block';
-    tfootTotal.textContent = '00:00';
-    return;
-}
-
-emptyState.style.display = 'none';
-
-let totalMin = 0;
-
-lista
-    .slice()
-    .sort((a, b) => (a.data < b.data ? -1 : 1))
-    .forEach(r => {
-        const minutos = horasTrabalhadasMin(r);
-        totalMin += minutos;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="id-registro" data-label="">${r.id_linha}</td>
-            <td class="time" data-label="Colaborador">${r.colaborador}</td>
-            <td class="date" data-label="Data">${formatarData(r.data)}</td>
-            <td class="time" data-label="Entrada">${r.entrada} > ${r.retornoAlmoco}</td>
-            <td class="time" data-label="Saída almoço">${r.saidaAlmoco} > ${r.saida}</td>
-            <td class="time" data-label="Retorno almoço">${r.retornoAlmoco}</td>
-            <td class="time" data-label="Saída">${r.saida}</td>
-            <td class="total" data-label="Horas trabalhadas">${paraHHMM(minutos)}</td>
-            <td class="acoes" data-label="Acoes">
-              <span class="material-symbols-outlined">check</span>
-              <span class="material-symbols-outlined">close</span>  
-            </td>
-          `;
-        tableBody.appendChild(tr);
-    });
-tfootTotal.textContent = paraHHMM(totalMin);
-}
-
-function aplicarFiltros() {
-    /*Coleta o valor inputado no filtro colaborador através da variavel
-    colaboradorSelect que armazena o componente select do filtro
-    const colaboradorSelect = document.getElementById('colaborador') */
-    const colaborador = colaboradorSelect.value;
-    //Coleta o valor inputado no filtro de data inicio
-    const dataInicio = document.getElementById('dataInicio').value;
-    //Coleta o valor inputado no filtro de data fim
-    const dataFim = document.getElementById('dataFim').value;
-
-    /*Utiliza a function nativa (filter) para filtrar a lista registros de 
-    acordo com as variaveis do filtro definidas acima */
-    const filtrados = registros.filter(r => {
-        /*verifica primeiro se a variavel está preenchida e também se satifaz
-        a condição de busca para cada registro */
-        if (
-            (colaborador == '' || r.colaborador == colaborador) &&
-            (dataInicio == '' || r.data >= dataInicio) &&
-            (dataFim == '' || r.data <= dataFim)
-        ) return true;
-        return false;
-    });
-    //Invoca a function responsavel por carregar os elementos na tela com HTML
-    carregarListaTela(filtrados);
-}
-
+// setInterval repete a função a cada 1000 milissegundos (1 segundo)
+// é isso que faz o relógio andar
+setInterval(atualizarRelogio, 1000);

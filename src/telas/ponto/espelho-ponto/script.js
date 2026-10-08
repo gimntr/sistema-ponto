@@ -1,44 +1,53 @@
 (function () {
 
+    // Sem o id não dá pra saber qual linha a pessoa quer editar.
     const registros = [
+        { id: 1, colaborador: 'Ana Souza', data: '2026-09-15', entrada: '08:02', saidaAlmoco: '12:00', retornoAlmoco: '13:01', saida: '17:58' },
+        { id: 2, colaborador: 'Ana Souza', data: '2026-09-16', entrada: '08:05', saidaAlmoco: '12:03', retornoAlmoco: '13:00', saida: '18:10' },
+        { id: 3, colaborador: 'Bruno Lima', data: '2026-09-15', entrada: '09:00', saidaAlmoco: '12:30', retornoAlmoco: '13:30', saida: '18:05' },
+        { id: 4, colaborador: 'Bruno Lima', data: '2026-09-16', entrada: '08:55', saidaAlmoco: '12:28', retornoAlmoco: '13:32', saida: '18:00' },
+        { id: 5, colaborador: 'Carla Mendes', data: '2026-09-15', entrada: '07:30', saidaAlmoco: '11:30', retornoAlmoco: '12:30', saida: '16:35' },
+        { id: 6, colaborador: 'Carla Mendes', data: '2026-09-16', entrada: '07:28', saidaAlmoco: '11:32', retornoAlmoco: '12:31', saida: '16:30' },
+        { id: 7, colaborador: 'Diego Ferreira', data: '2026-09-15', entrada: '08:15', saidaAlmoco: '12:10', retornoAlmoco: '13:10', saida: '17:20' },
+        { id: 8, colaborador: 'Diego Ferreira', data: '2026-09-19', entrada: '08:12', saidaAlmoco: '12:10', retornoAlmoco: '13:08', saida: '16:55' }
+    ];
 
-    { colaborador: 'Ana Souza', data: '2026-09-15', entrada: '08:02', saidaAlmoco: '12:00', retornoAlmoco: '13:01', saida: '17:58' },
-    { colaborador: 'Ana Souza', data: '2026-09-16', entrada: '08:05', saidaAlmoco: '12:03', retornoAlmoco: '13:00', saida: '18:10' },
-    { colaborador: 'Bruno Lima', data: '2026-09-15', entrada: '09:00', saidaAlmoco: '12:30', retornoAlmoco: '13:30', saida: '18:05' },
-    { colaborador: 'Bruno Lima', data: '2026-09-16', entrada: '08:55', saidaAlmoco: '12:28', retornoAlmoco: '13:32', saida: '18:00' },
-    { colaborador: 'Carla Mendes', data: '2026-09-15', entrada: '07:30', saidaAlmoco: '11:30', retornoAlmoco: '12:30', saida: '16:35' },
-    { colaborador: 'Carla Mendes', data: '2026-09-16', entrada: '07:28', saidaAlmoco: '11:32', retornoAlmoco: '12:31', saida: '16:30' },
-    { colaborador: 'Diego Ferreira', data: '2026-09-15', entrada: '08:15', saidaAlmoco: '12:10', retornoAlmoco: '13:10', saida: '17:20' },
-    { colaborador: 'Diego Ferreira', data: '2026-09-19', entrada: '08:12', saidaAlmoco: '12:10', retornoAlmoco: '13:08', saida: '16:55' }
-];
+    // guarda o id do registro que está sendo editado agora
+    let idEditando = null;
 
     // ===== ELEMENTOS DA TELA =====
-    const form = document.getElementById('filterForm');          // o formulário de filtros
-    const tableBody = document.getElementById('tableBody');      // corpo da tabela (onde entram as linhas)
-    const tfootTotal = document.getElementById('tfootTotal');    // célula do total de horas
-    const emptyState = document.getElementById('emptyState');    // aviso "nenhum lançamento"
-    const selectColaborador = document.getElementById('colaborador'); // NOVO: a caixa de seleção
+    const form = document.getElementById('filterForm');
+    const tableBody = document.getElementById('tableBody');
+    const tfootTotal = document.getElementById('tfootTotal');
+    const emptyState = document.getElementById('emptyState');
+    const selectColaborador = document.getElementById('colaborador');
 
-    // ===== FUNÇÕES DE CONVERSÃO DE HORÁRIO =====
+    // elementos da janelinha de edição (o <dialog> do HTML)
+    const modalEditar = document.getElementById('modalEditar');
+    const formEditar = document.getElementById('formEditar');
+    const editEntrada = document.getElementById('editEntrada');
+    const editSaidaAlmoco = document.getElementById('editSaidaAlmoco');
+    const editRetornoAlmoco = document.getElementById('editRetornoAlmoco');
+    const editSaida = document.getElementById('editSaida');
+    const btnCancelar = document.getElementById('btnCancelar');
 
-    // Converte "08:30" em minutos desde meia-noite (510).
-    // Com minutos fica fácil somar e subtrair horários.
+    // ===== FUNÇÕES DE HORÁRIO =====
+
+    // "08:30" vira 510 (minutos desde meia-noite)
     function paraMinutos(hhmm) {
-        const [h, m] = hhmm.split(':').map(Number); // separa em ["08","30"] e converte para número
+        const [h, m] = hhmm.split(':').map(Number);
         return h * 60 + m;
     }
 
-    // Faz o contrário: converte minutos em "HH:MM" (510 vira "08:30").
-    // Aceita valor negativo e coloca o sinal "-" na frente.
+    // 510 vira "08:30". Se for negativo, coloca "-" na frente
     function paraHHMM(minutosTotais) {
         const sinal = minutosTotais < 0 ? '-' : '';
         const abs = Math.abs(minutosTotais);
-        const h = Math.floor(abs / 60);   // horas inteiras
-        const m = abs % 60;               // minutos que sobraram
+        const h = Math.floor(abs / 60);
+        const m = abs % 60;
         return `${sinal}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
     }
 
-    // Calcula quantos minutos o colaborador trabalhou no dia:
     // (saída almoço - entrada) + (saída - retorno almoço)
     function horasTrabalhadasMin(r) {
         const manha = paraMinutos(r.saidaAlmoco) - paraMinutos(r.entrada);
@@ -46,26 +55,25 @@
         return manha + tarde;
     }
 
-    // Converte a data "2026-09-15" para o formato brasileiro "15/09/2026"
+    // "2026-09-15" vira "15/09/2026"
     function formatarData(iso) {
         const [ano, mes, dia] = iso.split('-');
         return `${dia}/${mes}/${ano}`;
     }
 
-    // ===== NOVO: PREENCHER A LISTA DE COLABORADORES =====
+    // ===== PREENCHER A LISTA DE COLABORADORES =====
     function preencherColaboradores() {
-        // Pega o nome de cada registro. O Set remove os repetidos,
-        // e o sort() coloca em ordem alfabética.
+        // Set tira os nomes repetidos, sort() põe em ordem alfabética
         const nomes = [...new Set(registros.map(r => r.colaborador))].sort();
-        console.trace("preencherColaboradores chamada");
-      
+
+        // começa com a opção "Todos" (value vazio = sem filtro)
+        selectColaborador.innerHTML = '<option value="">Todos</option>';
 
         nomes.forEach(nome => {
-              console.log(nome)
-            const option = document.createElement('option'); // cria uma <option>
-            option.value = nome;                             // valor usado no filtro
-            option.textContent = nome;                       // texto que aparece na tela
-            selectColaborador.appendChild(option);           // adiciona no <select>
+            const option = document.createElement('option');
+            option.value = nome;
+            option.textContent = nome;
+            selectColaborador.appendChild(option);
         });
     }
 
@@ -73,70 +81,123 @@
     function render(lista) {
         tableBody.innerHTML = ''; // limpa as linhas antigas
 
-        // Se não há nada para mostrar, exibe o aviso e zera o total
+        // sem registros: mostra o aviso e zera o total
         if (lista.length === 0) {
             emptyState.style.display = 'block';
             tfootTotal.textContent = '00:00';
-            return; // para a função aqui
+            return;
         }
 
-        emptyState.style.display = 'none'; // esconde o aviso
+        emptyState.style.display = 'none';
 
-        let totalMin = 0; // acumulador do total de minutos do período
+        let totalMin = 0;
 
         lista
-            .slice()                                            // cópia, para não alterar o original
-            .sort((a, b) => (a.data < b.data ? -1 : 1))         // ordena da data mais antiga para a mais nova
+            .slice()                                    // cópia pra não mexer no original
+            .sort((a, b) => (a.data < b.data ? -1 : 1)) // data mais antiga primeiro
             .forEach(r => {
-                const minutos = horasTrabalhadasMin(r); // minutos trabalhados neste dia
-                totalMin += minutos;                    // soma no total
+                const minutos = horasTrabalhadasMin(r);
+                totalMin += minutos;
 
-                const tr = document.createElement('tr'); // cria uma linha
-                // Monta as células. O data-label é usado pelo CSS no celular,
-                // para mostrar o nome da coluna ao lado de cada valor.
+                const tr = document.createElement('tr');
+
+                // O lápis agora tem data-acao="editar" e data-id.
+                // É assim que o clique sabe QUAL linha é.
                 tr.innerHTML = `
-          <td class="date" data-label="Data">${formatarData(r.data)}</td>
-          <td class="time" data-label="Entrada">${r.entrada}</td>
-          <td class="time" data-label="Saída almoço">${r.saidaAlmoco}</td>
-          <td class="time" data-label="Retorno almoço">${r.retornoAlmoco}</td>
-          <td class="time" data-label="Saída">${r.saida}</td>
-          <td class="total" data-label="Horas trabalhadas">${paraHHMM(minutos)}</td>
-          <td class="acoes" data-label="Ações">
-            <span class="material-symbols-outlined">edit</span>
-          </td>
-        `;
-                tableBody.appendChild(tr); // coloca a linha na tabela
+                    <td class="date" data-label="Data">${formatarData(r.data)}</td>
+                    <td class="time" data-label="Entrada">${r.entrada}</td>
+                    <td class="time" data-label="Saída almoço">${r.saidaAlmoco}</td>
+                    <td class="time" data-label="Retorno almoço">${r.retornoAlmoco}</td>
+                    <td class="time" data-label="Saída">${r.saida}</td>
+                    <td class="total" data-label="Horas trabalhadas">${paraHHMM(minutos)}</td>
+                    <td class="acoes" data-label="Ações">
+                        <span class="material-symbols-outlined"
+                              data-acao="editar"
+                              data-id="${r.id}"
+                              title="Editar"
+                              tabindex="0">edit</span>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
             });
 
-        tfootTotal.textContent = paraHHMM(totalMin); // mostra o total no rodapé
+        tfootTotal.textContent = paraHHMM(totalMin);
     }
 
     // ===== FILTROS =====
     function aplicarFiltros() {
-        // Lê o que a pessoa escolheu nos campos
-        const colaborador = selectColaborador.value;               // NOVO
+        const colaborador = selectColaborador.value;
         const dataInicio = document.getElementById('dataInicio').value;
         const dataFim = document.getElementById('dataFim').value;
 
-        // filter() mantém só os registros que passam em TODAS as condições.
-        // Campo vazio = sem filtro naquele critério.
-        // Datas no formato ISO (aaaa-mm-dd) podem ser comparadas como texto.
+        // campo vazio = não filtra por ele
         const filtrados = registros.filter(r =>
-            (colaborador === '' || r.colaborador === colaborador) &&  // NOVO
+            (colaborador === '' || r.colaborador === colaborador) &&
             (dataInicio === '' || r.data >= dataInicio) &&
             (dataFim === '' || r.data <= dataFim)
         );
 
-        render(filtrados); // desenha só os registros filtrados
+        render(filtrados); // desenha só os filtrados
     }
 
-    // Quando clicar em "Filtrar"...
+    // ===== CLIQUE NO LÁPIS =====
+    // Um ouvinte só no <tbody> atende todas as linhas,
+    // inclusive as que o JavaScript cria depois.
+    tableBody.addEventListener('click', e => {
+        // procura o elemento clicado que tenha data-acao
+        const botao = e.target.closest('[data-acao]');
+        if (!botao) return; // clicou em outra coisa, ignora
+
+        const id = Number(botao.dataset.id);
+        const acao = botao.dataset.acao;
+
+        // acha o registro que tem esse id
+        const registro = registros.find(r => r.id === id);
+        if (!registro) return;
+
+        if (acao === 'editar') {
+            idEditando = id; // lembra quem estamos editando
+
+            // preenche a janelinha com os horários atuais
+            editEntrada.value = registro.entrada;
+            editSaidaAlmoco.value = registro.saidaAlmoco;
+            editRetornoAlmoco.value = registro.retornoAlmoco;
+            editSaida.value = registro.saida;
+
+            modalEditar.showModal(); // abre a janelinha
+        }
+    });
+
+    // ===== SALVAR A EDIÇÃO =====
+    formEditar.addEventListener('submit', e => {
+        e.preventDefault(); // não deixa a página recarregar
+
+        const registro = registros.find(r => r.id === idEditando);
+        if (!registro) return;
+
+        // troca os horários antigos pelos novos
+        registro.entrada = editEntrada.value;
+        registro.saidaAlmoco = editSaidaAlmoco.value;
+        registro.retornoAlmoco = editRetornoAlmoco.value;
+        registro.saida = editSaida.value;
+
+        modalEditar.close();  // fecha a janelinha
+        aplicarFiltros();     // redesenha mantendo os filtros e recalcula o total
+    });
+
+    // ===== CANCELAR =====
+    btnCancelar.addEventListener('click', () => {
+        modalEditar.close(); // só fecha, não salva nada
+    });
+
+    // ===== FILTRAR =====
     form.addEventListener('submit', e => {
-        e.preventDefault(); // impede a página de recarregar
-        aplicarFiltros();   // aplica os filtros
+        e.preventDefault();
+        aplicarFiltros();
     });
 
     // ===== AO ABRIR A PÁGINA =====
-    preencherColaboradores(); // preenche o <select>
-    aplicarFiltros();         // mostra a tabela já na abertura
+    preencherColaboradores();
+    aplicarFiltros();
+
 })();

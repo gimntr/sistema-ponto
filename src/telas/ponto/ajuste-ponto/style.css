@@ -403,4 +403,5 @@ tfoot .total-value {
     .table-width tfoot td[data-label=""]:not(.total-label):not(.total-value) {
         display: none;
     }
+    
 }

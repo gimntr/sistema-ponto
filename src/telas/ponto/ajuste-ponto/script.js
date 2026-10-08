@@ -1,19 +1,3 @@
-/* =====================================================================
-   ESPELHO DE PONTO: script.js
-   O que este arquivo faz:
-     1. Guarda os registros de ponto (dados de exemplo)
-     2. Preenche o <select> de colaboradores
-     3. Desenha as linhas da tabela
-     4. Filtra por colaborador e período ao enviar o formulário
-     5. Calcula as horas trabalhadas de cada dia e o total do período
-   ===================================================================== */
-
-
-/* =====================================================================
-   1) ELEMENTOS DA TELA
-   Buscamos no HTML cada elemento que o código vai usar, uma única vez,
-   e guardamos em constantes. "getElementById" procura pelo atributo id.
-   ===================================================================== */
 const formFiltros = document.getElementById("filterForm");   // <form> dos filtros
 const selectColab = document.getElementById("colaborador");  // <select> de colaborador
 const inputInicio = document.getElementById("dataInicio");   // data inicial ("De")
@@ -24,22 +8,6 @@ const totalPeriodo = document.getElementById("totalPeriodo"); // célula com o t
 // Quantidade de colunas da tabela (usada para a mensagem de "sem registros")
 const TOTAL_COLUNAS = 8;
 
-
-/* =====================================================================
-   2) DADOS
-   Por enquanto são dados de exemplo escritos à mão.
-   Mais tarde você pode trocar este array por dados vindos de uma API
-   (fetch) ou de um banco, mantendo o mesmo formato.
-
-   Formato de cada registro:
-     id               número único do registro
-     colaborador      nome da pessoa
-     data             "AAAA-MM-DD" (mesmo formato do <input type="date">)
-     entrada          "HH:MM"
-     saidaIntervalo   "HH:MM" ou "" se não houve intervalo
-     retornoIntervalo "HH:MM" ou "" se não houve intervalo
-     saida            "HH:MM"
-   ===================================================================== */
 const registros = [
   { id: 1, colaborador: "Ana Souza",   data: "2026-09-28", entrada: "08:00", saidaIntervalo: "12:00", retornoIntervalo: "13:00", saida: "17:00" },
   { id: 2, colaborador: "Ana Souza",   data: "2026-09-29", entrada: "08:10", saidaIntervalo: "12:05", retornoIntervalo: "13:05", saida: "17:30" },
@@ -48,7 +16,6 @@ const registros = [
   { id: 5, colaborador: "Bruno Lima",  data: "2026-09-29", entrada: "09:05", saidaIntervalo: "12:30", retornoIntervalo: "13:30", saida: "18:10" },
   { id: 6, colaborador: "Carla Mendes", data: "2026-09-30", entrada: "08:00", saidaIntervalo: "",      retornoIntervalo: "",      saida: "14:00" },
 ];
-
 
 /* =====================================================================
    3) FUNÇÕES AUXILIARES (cálculo e formatação)
@@ -188,6 +155,7 @@ function renderizarTabela(lista) {
   // Sem registros: mostra uma mensagem em uma única linha
   if (lista.length === 0) {
     const tr = document.createElement("tr");
+    if (reg.status) tr.classList.add(reg.status);
     const td = document.createElement("td");
     td.colSpan = TOTAL_COLUNAS;               // ocupa todas as colunas
     td.className = "empty-state";             // estilo definido no CSS
@@ -245,24 +213,25 @@ formFiltros.addEventListener("submit", (evento) => {
 // linhas, inclusive as criadas depois. Mais simples e eficiente do que
 // colocar um ouvinte em cada ícone.
 tableBody.addEventListener("click", (evento) => {
-  // closest procura o ícone clicado (ou o ancestral mais próximo com data-acao)
   const botao = evento.target.closest("[data-acao]");
-  if (!botao) return;   // clicou em outra coisa: ignora
+  if (!botao) return;
 
   const id = Number(botao.dataset.id);
   const acao = botao.dataset.acao;
 
-  if (acao === "editar") {
-    // Aqui você abriria um modal ou outra tela de edição.
-    console.log("Editar registro", id);
+  // Procura o registro que tem esse id
+  const registro = registros.find((r) => r.id === id);
+  if (!registro) return;
+
+  if (acao === "check") {
+    registro.status = "aprovado";
+    renderizarTabela(filtrarRegistros());
   }
 
-  if (acao === "excluir") {
-    // confirm abre uma caixa Sim/Não do navegador
-    if (confirm("Deseja excluir este registro?")) {
-      const posicao = registros.findIndex((r) => r.id === id);
-      if (posicao !== -1) registros.splice(posicao, 1);  // remove do array
-      renderizarTabela(filtrarRegistros());              // redesenha mantendo os filtros
+  if (acao === "reprovar") {
+    if (confirm("Deseja reprovar este registro?")) {
+      registro.status = "reprovado";
+      renderizarTabela(filtrarRegistros());
     }
   }
 });
