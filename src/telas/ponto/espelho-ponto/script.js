@@ -14,6 +14,8 @@
 
     // guarda o id do registro que está sendo editado agora
     let idEditando = null;
+    // guarda a lista que está na tela agora (para exportar o que está filtrado)
+    let listaAtual = [];
 
     // ===== ELEMENTOS DA TELA =====
     const form = document.getElementById('filterForm');
@@ -79,7 +81,8 @@
 
     // ===== DESENHAR A TABELA =====
     function render(lista) {
-        tableBody.innerHTML = ''; // limpa as linhas antigas
+        listaAtual = lista;
+        tableBody.innerHTML = '';
 
         // sem registros: mostra o aviso e zera o total
         if (lista.length === 0) {
@@ -196,8 +199,45 @@
         aplicarFiltros();
     });
 
+    // ===== EXPORTAR PARA EXCEL =====
+    document.getElementById('btnExportar').addEventListener('click', () => {
+        if (listaAtual.length === 0) {
+            alert('Não há registros para exportar.');
+            return;
+        }
+
+        const ordenada = listaAtual.slice().sort((a, b) => (a.data < b.data ? -1 : 1));
+
+        let totalMin = 0;
+        const linhas = [
+            ['Colaborador', 'Data', 'Entrada', 'Saída almoço', 'Retorno almoço', 'Saída', 'Horas trabalhadas']
+        ];
+
+        ordenada.forEach(r => {
+            const minutos = horasTrabalhadasMin(r);
+            totalMin += minutos;
+            linhas.push([
+                r.colaborador,
+                formatarData(r.data),
+                r.entrada,
+                r.saidaAlmoco,
+                r.retornoAlmoco,
+                r.saida,
+                paraHHMM(minutos)
+            ]);
+        });
+
+        linhas.push(['Total do período', '', '', '', '', '', paraHHMM(totalMin)]);
+
+        const planilha = XLSX.utils.aoa_to_sheet(linhas);
+        planilha['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 10 }, { wch: 14 }, { wch: 16 }, { wch: 10 }, { wch: 18 }];
+
+        const livro = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(livro, planilha, 'Espelho de Ponto');
+        XLSX.writeFile(livro, `espelho-de-ponto-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    });
+
     // ===== AO ABRIR A PÁGINA =====
     preencherColaboradores();
     aplicarFiltros();
-
 })();

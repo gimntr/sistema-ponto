@@ -112,3 +112,18 @@ atualizarData();
 // setInterval repete a função a cada 1000 milissegundos (1 segundo)
 // é isso que faz o relógio andar
 setInterval(atualizarRelogio, 1000);
+document.getElementById("btnExportar").addEventListener("click", () => {
+    const tabela = document.getElementById("tabelaEspelho"); // troque pelo id da sua tabela
+
+    // raw: true mantém horários como "08:00" em vez de o Excel converter
+    const planilha = XLSX.utils.table_to_sheet(tabela, { raw: true });
+
+    // Largura das colunas (ajuste a quantidade conforme suas colunas)
+    planilha["!cols"] = [{ wch: 12 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 12 }];
+
+    const livro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(livro, planilha, "Espelho de Ponto");
+
+    const hoje = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(livro, `espelho-de-ponto-${hoje}.xlsx`);
+});

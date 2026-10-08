@@ -9,6 +9,7 @@
   <link rel="stylesheet" href=".../components/menu/generate-component.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <!-- Só UM script, como module (necessário por causa do import) -->
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap">
 </head>
 
 <my-menu></my-menu>
@@ -41,6 +42,7 @@
         <input type="date" id="dataFim" name="dataFim">
       </div>
       <button type="submit" class="apply">Filtrar</button>
+<button type="button" id="btnExportar" class="btn-cancelar">Exportar para Excel</button>
     </form>
 
     <div class="table-panel">
@@ -76,6 +78,7 @@
   </div>
   <script src="script.js" defer></script>
   <script type="module" src="../components/menu/generate-component.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <dialog id="modalEditar">
   <form id="formEditar">
     <h2>Editar registro</h2>

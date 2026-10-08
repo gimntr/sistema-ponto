@@ -9,9 +9,8 @@
     --accent-hover: #2458c4; /* azul mais claro quando passo o mouse no botão */
     --accent-soft: #dff0f1;  /* fundo clarinho do lápis no hover */
     --focus: #1f6feb;        /* contorno azul de quando uso o Tab */
-
     --header-bg: #f7f9fb;    /* fundo do cabeçalho da tabela */
-    --footer-bg: #1#151a51b2733;    /* fundo escuro do total */
+    --footer-bg:#151a51; 
     --footer-ink: #ffffff;   /* texto branco do total */
 
     --radius: 8px;           /* o quanto os cantos são arredondados */
@@ -261,7 +260,7 @@ td.total {
 tfoot td {
     padding: 18px 16px;
     color: var(--footer-ink);
-    background: var(--footer-bg);  /* tinha "var#151a51", estava errado */
+    background: var(--footer-bg);  
     border-bottom: 0;
 }
 
