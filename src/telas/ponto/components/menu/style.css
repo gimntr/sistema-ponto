@@ -29,18 +29,21 @@ body {
   margin-right: 16px;
 }
 
-/* estado padrão: menu escondido fora da tela, à esquerda */
 #menu-lateral {
   position: fixed;
   top: 0;
   left: 0;
-  width: 240px;
+  width: 100vw;
   height: 100%;
-  background-color: white;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   z-index: 5;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+#menu-lateral2 {
+  width: 240px;
+  height: 100%;
+  background-color: white;
 }
 
 /* estado aberto: menu na posição normal, visível */
@@ -94,6 +97,13 @@ body {
 
 #conteudo-principal.deslocado {
   margin-left: 240px;
+}
+
+#overlay {
+  background-color: red;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
 }
 
 /* em telas pequenas, o menu ocupa quase a tela toda em vez de ficar fixo em 240px */
