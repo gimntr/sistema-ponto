@@ -1,117 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- avisa o navegador que é HTML5 e que o idioma é português do Brasil -->
 <html lang="pt-BR">
+  <!-- o <head> é a parte que o usuário não vê: título, estilos, scripts... -->
+  <head>
+    <!-- isso faz os acentos aparecerem certo (sem isso vira caractere estranho) -->
+    <meta charset="UTF-8" />
 
-<!-- o <head> é a parte que o usuário não vê: título, estilos, scripts... -->
-<head>
-  <!-- isso faz os acentos aparecerem certo (sem isso vira caractere estranho) -->
-  <meta charset="UTF-8">
+    <!-- isso deixa a página responsiva-->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- isso deixa a página responsiva-->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- título que aparece na aba do navegador -->
+    <title>Ajuste de ponto</title>
 
-  <!-- título que aparece na aba do navegador -->
-  <title>Ajuste de ponto</title>
+    <!-- fonte Public Sans (a que o CSS usa). Se não carregar, o CSS usa outra -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap"
+    />
 
-  <!-- fonte Public Sans (a que o CSS usa). Se não carregar, o CSS usa outra -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap">
+    <!-- fonte dos ícones (o check e o close das ações).-->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    />
 
-  <!-- fonte dos ícones (o check e o close das ações).-->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <!-- meu arquivo de estilo (cores, tabela, etc) -->
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- meu arquivo de estilo (cores, tabela, etc) -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- scripts do menu <my-menu>.
+    <!-- scripts do menu <my-menu>.
        O "defer" faz o script esperar a página carregar antes de rodar -->
-  <script src="../components/menu/script.js" defer></script>
-  <script type="module" src="../components/menu/generate-component.js"></script>
+    <script src="../components/menu/script.js" defer></script>
+    <script
+      type="module"
+      src="../components/menu/generate-component.js"
+    ></script>
 
-  <!-- meu script principal, que faz os botões funcionarem.
+    <!-- meu script principal, que faz os botões funcionarem.
        Antes ele estava repetido, agora só aqui -->
-  <script src="script.js" defer></script>
-</head>
+    <script src="script.js" defer></script>
+  </head>
 
-<!-- o <body> é tudo que aparece na tela -->
-<body>
+  <!-- o <body> é tudo que aparece na tela -->
+  <body>
+    <!-- caixa principal: centraliza e limita a largura (a classe "wrap" está no CSS) -->
+    <div class="wrap">
+      <!-- cabeçalho da página, só o título -->
+      <header>
+        <h1>Ajuste de ponto</h1>
+      </header>
 
-  <!-- caixa principal: centraliza e limita a largura (a classe "wrap" está no CSS) -->
-  <div class="wrap">
-
-    <!-- cabeçalho da página, só o título -->
-    <header>
-      <h1>Ajuste de ponto</h1>
-    </header>
-
-    <!-- formulário dos filtros: colaborador e período.
+      <!-- formulário dos filtros: colaborador e período.
          o id "filterForm" é como o JavaScript acha ele -->
-    <form class="filters" id="filterForm">
+      <form class="filters" id="filterForm">
+        <!-- campo 1: escolher o colaborador -->
+        <div class="field">
+          <!-- o "for" tem que ser igual ao id do campo, assim clicar no texto seleciona o campo -->
+          <label for="colaborador">Colaborador</label>
 
-      <!-- campo 1: escolher o colaborador -->
-      <div class="field">
-        <!-- o "for" tem que ser igual ao id do campo, assim clicar no texto seleciona o campo -->
-        <label for="colaborador">Colaborador</label>
+          <!-- o JavaScript apaga isso e coloca "Todos" + os nomes -->
+          <select id="colaborador" name="colaborador">
+            <option value="">Selecione</option>
+          </select>
+        </div>
 
-        <!-- o JavaScript apaga isso e coloca "Todos" + os nomes -->
-        <select id="colaborador" name="colaborador">
-          <option value="">Selecione</option>
-        </select>
-      </div>
-
-      <!-- o menu personalizado. Se der erro de "MeuMenu is not defined",
+        <!-- o menu personalizado. Se der erro de "MeuMenu is not defined",
            o problema está nos arquivos do menu, não aqui -->
-      <my-menu></my-menu>
+        <my-menu></my-menu>
 
-      <!-- campo 2: data de início -->
-      <div class="field">
-        <!-- aqui estava "mesInicio", mas o id do campo é "dataInicio". Corrigi -->
-        <label for="dataInicio">De</label>
-        <input type="date" id="dataInicio" name="dataInicio">
-      </div>
+        <!-- campo 2: data de início -->
+        <div class="field">
+          <!-- aqui estava "mesInicio", mas o id do campo é "dataInicio". Corrigi -->
+          <label for="dataInicio">De</label>
+          <input type="date" id="dataInicio" name="dataInicio" />
+        </div>
 
-      <!-- campo 3: data final -->
-      <div class="field">
-        <label for="dataFim">Até</label>
-        <input type="date" id="dataFim" name="dataFim">
-      </div>
+        <!-- campo 3: data final -->
+        <div class="field">
+          <label for="dataFim">Até</label>
+          <input type="date" id="dataFim" name="dataFim" />
+        </div>
 
-      <!-- botão de filtrar. Como é type="submit", ele envia o formulário
+        <!-- botão de filtrar. Como é type="submit", ele envia o formulário
            e o JavaScript escuta esse envio pra filtrar a tabela -->
-      <button type="submit" class="apply">Filtrar</button>
-    </form>
+        <button type="submit" class="apply">Filtrar</button>
+      </form>
 
-    <!-- caixa que envolve a tabela (no celular ela vira cartões) -->
-    <div class="table-panel">
-      <table class="table-width">
-
-        <!-- cabeçalho da tabela: o nome de cada coluna.
+      <!-- caixa que envolve a tabela (no celular ela vira cartões) -->
+      <div class="table-panel">
+        <table class="table-width">
+          <!-- cabeçalho da tabela: o nome de cada coluna.
              São 8 colunas, o mesmo número do TOTAL_COLUNAS no script.js -->
-        <thead>
-          <tr>
-            <th>Colaborador</th>
-            <th>Data</th>
-            <th>Entrada</th>
-            <th>Saída intervalo</th>
-            <th>Retorno intervalo</th>
-            <th>Saída</th>
-            <th>Horas trabalhadas</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
+          <thead>
+            <tr>
+              <th>Colaborador</th>
+              <th>Data</th>
+              <th>Entrada</th>
+              <th>Saída intervalo</th>
+              <th>Retorno intervalo</th>
+              <th>Saída</th>
+              <th>Horas trabalhadas</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
 
-        <!-- corpo da tabela: fica vazio de propósito!
+          <!-- corpo da tabela: fica vazio de propósito!
              O JavaScript cria as linhas aqui dentro usando o id "tableBody" -->
-        <tbody id="tableBody"></tbody>
+          <tbody id="tableBody"></tbody>
 
-        <!-- rodapé da tabela: total de horas do período -->
-        <tfoot>
-          <tr>
-            <!-- texto "Total do período" na primeira coluna -->
-            <td class="total-label" data-label="">Total do período</td>
+          <!-- rodapé da tabela: total de horas do período -->
+          <tfoot>
+            <tr>
+              <!-- texto "Total do período" na primeira coluna -->
+              <td class="total-label" data-label="">Total do período</td>
 
-            <!-- células vazias só pra ocupar o lugar das colunas do meio
+              <!-- células vazias só pra ocupar o lugar das colunas do meio
                  (Data, Entrada, Saída intervalo, Retorno intervalo, Saída) -->
-            <td data-label=""></td>
-            <td data-label=""></td>
-            <td data-label=""></td>
-            <td
+              <td data-label=""></td>
+              <td data-label=""></td>
+              <td data-label=""></td>
+              <td data-label=""></td>
+              <td data-label="" id="totalPeriodo"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
