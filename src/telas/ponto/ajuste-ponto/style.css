@@ -1,7 +1,3 @@
-/* =====================================================
-   1) VARIÁVEIS E BASE
-   (igual ao do Espelho de ponto)
-   ===================================================== */
 :root {
     --bg: #eef1f4;           /* fundo cinza clarinho da página */
     --surface: #ffffff;      /* branco: caixas, campos e linhas */
@@ -11,15 +7,17 @@
     --row-hover: #f5f8fa;    /* cor da linha quando passo o mouse */
     --accent: #151a51;       /* azul escuro dos botões */
     --accent-hover: #2458c4; /* azul mais claro quando passo o mouse no botão */
-    --accent-soft: #dff0f1;  /* fundo clarinho dos ícones no hover */
+    --accent-soft: #dff0f1;  /* fundo clarinho do ícone no hover */
     --focus: #1f6feb;        /* contorno azul de quando uso o Tab */
     --header-bg: #f7f9fb;    /* fundo do cabeçalho da tabela */
     --footer-bg: #151a51;    /* fundo da faixa do total */
     --footer-ink: #ffffff;   /* texto branco do total */
 
-    /* AJUSTE: cores das linhas aprovadas e reprovadas (só existe no Ajuste de ponto) */
+    /* NOVO: cores das linhas aprovadas e reprovadas */
     --ok-bg: #e8f6ed;        /* verde clarinho (aprovado) */
+    --ok-ink: #1d7a3e;       /* verde do ícone de aprovar */
     --bad-bg: #fdeceb;       /* vermelho clarinho (reprovado) */
+    --bad-ink: #c0392b;      /* vermelho do ícone de reprovar */
 
     --radius: 8px;           /* o quanto os cantos são arredondados */
 
@@ -48,11 +46,18 @@ body {
    2) LAYOUT (a organização geral da página)
    ===================================================== */
 
+/* O menu personalizado. Elemento criado por mim começa "inline",
+   então forço virar bloco pra ele se comportar direito.
+   (agora ele fica fora do formulário, em cima da página) */
+my-menu {
+    display: block;
+}
+
 /* Caixa que segura o conteúdo todo no meio da tela */
 .wrap {
     max-width: 1080px;           /* nunca fica mais larga que isso */
     margin: 0 auto;              /* "auto" nas laterais centraliza */
-    padding: 56px 24px 56px;     /* espaço: topo | laterais | embaixo */
+    padding: 56px 24px;          /* espaço: topo/embaixo | laterais */
 }
 
 /* Cabeçalho (onde fica o título) */
@@ -60,13 +65,9 @@ header {
     margin-bottom: 24px;
 }
 
-/* Título da página.
-   AJUSTE: no Espelho estava "margin: 20" (sem unidade), que o navegador ignora
-   e usa a margem padrão do h1 (0.67em em cima e embaixo). Eu tinha trocado por 0
-   e o título ficou colado no menu. Agora escrevo a margem padrão de forma válida,
-   então fica IGUAL ao Espelho. */
+/* Título "Ajuste de ponto" */
 h1 {
-    margin: 0.67em 0;
+    margin: 0;                   /* CORRIGIDO: era "margin: 20" sem unidade, o navegador ignorava */
     font-size: 1.75rem;
     font-weight: 700;            /* negrito */
     letter-spacing: -0.01em;     /* aproxima um pouquinho as letras */
@@ -100,12 +101,6 @@ h1 {
 /* O primeiro campo (Colaborador) estica e pega o espaço que sobrar */
 .field:first-child {
     flex: 1 1 220px;
-}
-
-/* O menu personalizado. Elemento criado por mim começa "inline",
-   então forço virar bloco pra ele se comportar direito. */
-my-menu {
-    display: block;
 }
 
 /* Os textinhos em cima dos campos (Colaborador, De, Até) */
@@ -167,7 +162,8 @@ input:focus-visible,
    4) TABELA
    ===================================================== */
 
-/* Caixa que envolve a tabela (se a tabela for larga demais, ganha rolagem) */
+/* Caixa que envolve a tabela (se a tabela for larga demais, ganha rolagem
+   em vez de cortar o conteúdo) */
 .table-panel {
     overflow-x: auto;
     background: var(--surface);
@@ -186,10 +182,9 @@ input:focus-visible,
     text-align: center;
 }
 
-/* Cabeçalho da tabela (Colaborador, Data, Entrada...)
-   AJUSTE: voltei o padding pra 16px, igual ao Espelho */
+/* Cabeçalho da tabela (Colaborador, Data, Entrada...) */
 th {
-    padding: 14px 16px;
+    padding: 14px 12px;          /* diminuí de 16 pra 12 porque agora são 8 colunas */
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--muted);
@@ -201,7 +196,7 @@ th {
 
 /* Células das linhas (as que o JavaScript cria) */
 td {
-    padding: 14px 16px;
+    padding: 14px 12px;
     border-bottom: 1px solid var(--line);
 }
 
@@ -215,7 +210,7 @@ tbody tr:hover {
     background: var(--row-hover);
 }
 
-/* AJUSTE: linha aprovada fica verdinha e linha reprovada fica vermelhinha.
+/* NOVO: linha aprovada fica verdinha e linha reprovada fica vermelhinha.
    Tem que ficar DEPOIS do :hover pra ganhar dele. */
 tbody tr.aprovado {
     background: var(--ok-bg);
@@ -262,9 +257,8 @@ td.total {
         'opsz' 24;
 }
 
-/* Ícones viram mãozinha e ficam com cantinho arredondado.
-   AJUSTE: padding e margin só pra o check e o X não ficarem grudados
-   (no Espelho tem um ícone só, então lá não precisa) */
+/* Ícones viram mãozinha, ganham cantinho arredondado e um espacinho
+   entre eles (senão o check e o X ficam grudados) */
 .acoes .material-symbols-outlined {
     cursor: pointer;
     border-radius: 6px;
@@ -272,10 +266,16 @@ td.total {
     margin: 0 2px;
 }
 
-/* Ícone fica azul com fundinho quando passo o mouse */
-.acoes .material-symbols-outlined:hover {
-    color: var(--accent);
-    background: var(--accent-soft);
+/* Check fica verde com fundinho quando passo o mouse */
+.acoes .material-symbols-outlined[data-acao="check"]:hover {
+    color: var(--ok-ink);
+    background: var(--ok-bg);
+}
+
+/* X fica vermelho com fundinho quando passo o mouse */
+.acoes .material-symbols-outlined[data-acao="reprovar"]:hover {
+    color: var(--bad-ink);
+    background: var(--bad-bg);
 }
 
 
@@ -283,17 +283,12 @@ td.total {
    6) RODAPÉ (total do período)
    ===================================================== */
 
-/* Faixa escura do total.
-   AJUSTE: vertical-align e line-height iguais em todas as células do rodapé.
-   Antes o texto (15px) e o total (20px) ficavam alguns pixels desencontrados;
-   assim os dois ficam centralizados na faixa. */
+/* Faixa escura do total */
 tfoot td {
-    padding: 18px 16px;
+    padding: 18px 12px;
     color: var(--footer-ink);
     background: var(--footer-bg);
     border-bottom: 0;
-    vertical-align: middle;
-    line-height: 1.5;
 }
 
 /* Texto "Total do período" fica na esquerda */
@@ -303,13 +298,11 @@ tfoot .total-label {
     white-space: nowrap;
 }
 
-/* Valor do total: maior e em negrito.
-   Fica centralizado embaixo da coluna "Horas trabalhadas" */
+/* Valor do total: maior e em negrito */
 tfoot .total-value {
     font-size: 1.25rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    text-align: center;
 }
 
 
@@ -327,7 +320,7 @@ tfoot .total-value {
    8) CELULAR (telas de até 720px)
    Tudo aqui dentro só vale em tela pequena.
    Cada linha da tabela vira um "cartãozinho".
-   ATENÇÃO: não colocar nada da janelinha aqui dentro!
+   ATENÇÃO: não colocar nada da janelinha (modal) aqui dentro!
    ===================================================== */
 @media (max-width: 720px) {
 
@@ -382,8 +375,8 @@ tfoot .total-value {
         overflow: hidden;        /* o conteúdo respeita o canto arredondado */
     }
 
-    /* AJUSTE: as cores de aprovado/reprovado também valem nos cartões.
-       Repeti aqui porque a regra acima é mais forte que a de fora. */
+    /* NOVO: as cores de aprovado/reprovado também valem nos cartões.
+       Precisei repetir aqui porque a regra acima é mais forte que a de fora */
     .table-width tbody tr.aprovado {
         background: var(--ok-bg);
     }
@@ -457,14 +450,15 @@ tfoot .total-value {
 
 /* =====================================================
    9) JANELINHA DE EDITAR (modal)
-   Fica FORA do @media de propósito.
-   (igual ao do Espelho de ponto)
+   Esses estilos ficam FORA do @media de propósito.
+   Obs.: o HTML atual não tem o <dialog id="modalEditar">,
+   então isso aqui só vai funcionar se você adicionar ele de novo.
    ===================================================== */
 
 /* A caixa da janelinha */
 dialog#modalEditar {
     width: 92%;                      /* no celular ocupa quase a tela toda */
-    max-width: 500px;                /* tamanho form "Editar registro" */
+    max-width: 500px;                /* tamanho do form "Editar registro" */
     padding: 32px;                   /* espaço entre a borda e o conteúdo */
     border: 1px solid var(--line);   /* troca a borda preta grossa por uma fininha */
     border-radius: var(--radius);
