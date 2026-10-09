@@ -137,18 +137,37 @@ document.addEventListener('DOMContentLoaded', () => {
   // e ajustar os campos conforme o que ele espera receber
   async function autenticar(usuario, senha) {
 
-    // o "await" faz esperar o servidor responder antes de continuar
-    const resposta = await fetch('/api/login', {
-      method: 'POST',                                      // POST = estou enviando dados
-      headers: { 'Content-Type': 'application/json' },     // aviso que o que vai é JSON
-      body: JSON.stringify({ usuario, senha })             // transforma usuário e senha em texto JSON
-    });
+  const myHeaders = new Headers();
+  myHeaders.append("accept", "application/json");
+  myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+  const urlencoded = new URLSearchParams();
+  urlencoded.append("username", usuario);
+  urlencoded.append("senha", senha);
+
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: urlencoded,
+    redirect: "follow"
+  };
+
+  const resposta = await fetch("https://helpdesk.medsystems.com.br:3000/login", requestOptions)
+  .then(response => response.json())
 
     // se o servidor respondeu com erro (401, 500, etc), joga um erro
-    if (!resposta.ok) throw new Error('Usuário ou senha inválidos.');
+    if (!resposta.JSONID){
+      throw new Error('Usuário ou senha inválidos.')
+    };
+
+    localStorage.setItem('usuario', usuario);
+    localStorage.setItem('JSONID', resposta.JSONID);
+    localStorage.setItem('token', resposta.bearer);
+
+    window.location.href = '/src/telas/ponto/registro-ponto/index.html';
 
     // se deu certo, devolve a resposta já transformada em objeto
-    return resposta.json();
+    return resposta;
   }
 
   // LIGAR O FORMULÁRIO (o que acontece ao clicar em "Entrar")
