@@ -60,8 +60,29 @@ function atualizarData() {
 }
 
 // essa função roda toda vez que o usuário clica no botão
-function registrarPonto() {
+async function registrarPonto() {
     // se já bateu os 4 pontos do dia, não deixa bater mais
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+    "userCode": "0"
+    });
+
+    const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow"
+    };
+
+    const resposta = await fetch("http://localhost:3000/registroPontoEstag/registra-ponto", requestOptions)
+    .then((response) => response.json())
+
+    if(resposta.data.status != 1)
+        throw new Error('Erro ao registrar ponto: ' + resposta.message);
+
     if (totalRegistros >= tiposDePonto.length) {
         statusEl.textContent = 'Você já registrou todos os pontos de hoje.';
         return; // sai da função aqui

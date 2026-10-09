@@ -139,11 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const myHeaders = new Headers();
   myHeaders.append("accept", "application/json");
-  myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+  myHeaders.append("Content-Type", "application/json");
 
-  const urlencoded = new URLSearchParams();
-  urlencoded.append("username", usuario);
-  urlencoded.append("senha", senha);
+  const urlencoded = JSON.stringify({
+    "username": usuario,
+    "password": senha
+  });
 
   const requestOptions = {
     method: "POST",
@@ -152,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     redirect: "follow"
   };
 
-  const resposta = await fetch("https://helpdesk.medsystems.com.br:3000/login", requestOptions)
+  const resposta = await fetch("http://localhost:3000/registroPontoEstag/login", requestOptions)
   .then(response => response.json())
 
     // se o servidor respondeu com erro (401, 500, etc), joga um erro
@@ -160,9 +161,12 @@ document.addEventListener('DOMContentLoaded', () => {
       throw new Error('Usuário ou senha inválidos.')
     };
 
+    console.log(resposta);
+
     localStorage.setItem('usuario', usuario);
     localStorage.setItem('JSONID', resposta.JSONID);
     localStorage.setItem('token', resposta.bearer);
+    localStorage.setItem('userCode', resposta.userCode);
 
     window.location.href = '/src/telas/ponto/registro-ponto/index.html';
 
