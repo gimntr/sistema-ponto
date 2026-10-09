@@ -1,16 +1,18 @@
-(function () {
+(async function () {
 
     // Sem o id não dá pra saber qual linha a pessoa quer editar.
-    const registros = [
-        { id: 1, colaborador: 'Ana Souza', data: '2026-09-15', entrada: '08:02', saidaAlmoco: '12:00', retornoAlmoco: '13:01', saida: '17:58' },
-        { id: 2, colaborador: 'Ana Souza', data: '2026-09-16', entrada: '08:05', saidaAlmoco: '12:03', retornoAlmoco: '13:00', saida: '18:10' },
-        { id: 3, colaborador: 'Bruno Lima', data: '2026-09-15', entrada: '09:00', saidaAlmoco: '12:30', retornoAlmoco: '13:30', saida: '18:05' },
-        { id: 4, colaborador: 'Bruno Lima', data: '2026-09-16', entrada: '08:55', saidaAlmoco: '12:28', retornoAlmoco: '13:32', saida: '18:00' },
-        { id: 5, colaborador: 'Carla Mendes', data: '2026-09-15', entrada: '07:30', saidaAlmoco: '11:30', retornoAlmoco: '12:30', saida: '16:35' },
-        { id: 6, colaborador: 'Carla Mendes', data: '2026-09-16', entrada: '07:28', saidaAlmoco: '11:32', retornoAlmoco: '12:31', saida: '16:30' },
-        { id: 7, colaborador: 'Diego Ferreira', data: '2026-09-15', entrada: '08:15', saidaAlmoco: '12:10', retornoAlmoco: '13:10', saida: '17:20' },
-        { id: 8, colaborador: 'Diego Ferreira', data: '2026-09-19', entrada: '08:12', saidaAlmoco: '12:10', retornoAlmoco: '13:08', saida: '16:55' }
-    ];
+
+    const requestOptions = {
+    method: "GET",
+    redirect: "follow"
+    };
+
+    const response = await fetch("http://localhost:3000/registroPontoEstag/espelho-ponto?userCode=0&dataInicio=2026-01-01&dataFim=2026-11-11", requestOptions)
+    .then((response) => response.json())
+
+    console.log('Resposta do servidor:', response);
+
+    const registros = response.data;
 
     // guarda o id do registro que está sendo editado agora
     let idEditando = null;
@@ -57,12 +59,6 @@
         return manha + tarde;
     }
 
-    // "2026-09-15" vira "15/09/2026"
-    function formatarData(iso) {
-        const [ano, mes, dia] = iso.split('-');
-        return `${dia}/${mes}/${ano}`;
-    }
-
     // ===== PREENCHER A LISTA DE COLABORADORES =====
     function preencherColaboradores() {
         // Set tira os nomes repetidos, sort() põe em ordem alfabética
@@ -107,7 +103,7 @@
                 // O lápis agora tem data-acao="editar" e data-id.
                 // É assim que o clique sabe QUAL linha é.
                 tr.innerHTML = `
-                    <td class="date" data-label="Data">${formatarData(r.data)}</td>
+                    <td class="date" data-label="Data">${r.data}</td>
                     <td class="time" data-label="Entrada">${r.entrada}</td>
                     <td class="time" data-label="Saída almoço">${r.saidaAlmoco}</td>
                     <td class="time" data-label="Retorno almoço">${r.retornoAlmoco}</td>
@@ -146,16 +142,18 @@
     // ===== CLIQUE NO LÁPIS =====
     // Um ouvinte só no <tbody> atende todas as linhas,
     // inclusive as que o JavaScript cria depois.
-    tableBody.addEventListener('click', e => {
+    tableBody.addEventListener('click', async e => {
         // procura o elemento clicado que tenha data-acao
         const botao = e.target.closest('[data-acao]');
+
         if (!botao) return; // clicou em outra coisa, ignora
 
-        const id = Number(botao.dataset.id);
+        const id = botao.dataset.id;
         const acao = botao.dataset.acao;
 
         // acha o registro que tem esse id
         const registro = registros.find(r => r.id === id);
+
         if (!registro) return;
 
         if (acao === 'editar') {
@@ -172,7 +170,7 @@
     });
 
     // ===== SALVAR A EDIÇÃO =====
-    formEditar.addEventListener('submit', e => {
+    formEditar.addEventListener('submit', async e => {
         e.preventDefault(); // não deixa a página recarregar
 
         const registro = registros.find(r => r.id === idEditando);
@@ -189,7 +187,7 @@
     });
 
     // ===== CANCELAR =====
-    btnCancelar.addEventListener('click', () => {
+    btnCancelar.addEventListener('click', async() => {
         modalEditar.close(); // só fecha, não salva nada
     });
 
@@ -200,7 +198,7 @@
     });
 
     // ===== EXPORTAR PARA EXCEL =====
-    document.getElementById('btnExportar').addEventListener('click', () => {
+    document.getElementById('btnExportar').addEventListener('click', async () => {
         if (listaAtual.length === 0) {
             alert('Não há registros para exportar.');
             return;
@@ -218,7 +216,7 @@
             totalMin += minutos;
             linhas.push([
                 r.colaborador,
-                formatarData(r.data),
+                r.data,
                 r.entrada,
                 r.saidaAlmoco,
                 r.retornoAlmoco,
@@ -240,5 +238,4 @@
     // ===== AO ABRIR A PÁGINA =====
     preencherColaboradores();
     aplicarFiltros();
-
 })();
