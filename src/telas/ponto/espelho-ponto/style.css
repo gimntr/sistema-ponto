@@ -36,9 +36,7 @@ body {
 }
 
 
-/* =====================================================
-   2) LAYOUT (a organização geral da página)
-   ===================================================== */
+/* LAYOUT */
 
 /* Caixa que segura o conteúdo todo no meio da tela */
 .wrap {
@@ -61,9 +59,7 @@ h1 {
 }
 
 
-/* =====================================================
-   3) FILTROS (a caixa branca de cima)
-   ===================================================== */
+/* FILTROS (a caixa branca de cima) */
 
 /* O formulário dos filtros */
 .filters {
@@ -151,9 +147,7 @@ input:focus-visible,
 }
 
 
-/* =====================================================
-   4) TABELA
-   ===================================================== */
+/* TABELA /
 
 /* Caixa que envolve a tabela (se a tabela for larga demais, ganha rolagem) */
 .table-panel {

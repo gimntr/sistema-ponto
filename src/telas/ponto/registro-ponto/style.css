@@ -1,22 +1,13 @@
 :root {
-  --bg: #eef1f6;
-  /* cor de fundo da página */
-  --card: #ffffff;
-  /* cor do cartão central */
-  --text: #1c2333;
-  /* cor do texto principal */
-  --muted: #6b7489;
-  /* cor de textos secundários */
-  --primary: #151a51;
-  /* cor principal, usada no botão */
-  --primary-dark: #2458c4;
-  /* usado quando passa o mouse */
-  --display-bg: #ffffff;
-  /* fundo da caixa do relógio */
-  --display-text: #151a51;
-  /* cor dos números do relógio */
-  --border: #e2e6ef;
-  /* cor das linhas divisórias */
+  --bg: #eef1f6;            /* cor de fundo da página */
+  --card: #ffffff;          /* cor do cartão central */
+  --text: #1c2333;          /* cor do texto principal */
+  --muted: #6b7489;         /* cor de textos secundários */
+  --primary: #151a51;       /* cor principal, usada no botão */
+  --primary-dark: #2458c4;  /* usado quando passa o mouse */
+  --display-bg: #ffffff;    /* fundo da caixa do relógio */
+  --display-text: #151a51;  /* cor dos números do relógio */
+  --border: #e2e6ef;        /* cor das linhas divisórias */
 }
 
 :root {
@@ -29,22 +20,14 @@
 
 /* CORPO DA PÁGINA */
 body {
-  min-height: 100vh;
-  /* altura mínima = 100% da altura da tela */
-  display: flex;
-  /* ativa o modo flexbox para alinhar o conteúdo */
-  justify-content: center;
-  /* centraliza o cartão na horizontal */
-  align-items: center;
-  /* centraliza o cartão na vertical */
-  padding: 24px 16px;
-  /* 24px em cima/embaixo, 16px nas laterais */
-  background: var(--bg);
-  /* usa a cor de fundo definida nas variáveis */
-  color: var(--text);
-  /* cor padrão dos textos */
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  /* usa a fonte do próprio sistema (Windows, Mac, Android...). Se uma não existir, tenta a próxima */
+  min-height: 100vh;       /* altura mínima = 100% da altura da tela */
+  display: flex;           /* ativa o modo flexbox para alinhar o conteúdo */
+  justify-content: center; /* centraliza o cartão na horizontal */
+  align-items: center;     /* centraliza o cartão na vertical */
+  padding: 24px 16px;      /* 24px em cima/embaixo, 16px nas laterais */
+  background: var(--bg);   /* usa a cor de fundo definida nas variáveis */
+  color: var(--text);      /* cor padrão dos textos */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* usa a fonte do próprio sistema (Windows, Mac, Android...). Se uma não existir, tenta a próxima */
 }
 
 /* Cabeçalho da página */
@@ -54,88 +37,58 @@ header {
 
 /* CARTÃO CENTRAL */
 .device {
-  width: 100%;
-  /* ocupa toda a largura disponível... */
-  max-width: 420px;
-  /* ...mas nunca passa de 420px */
-  padding: 24px;
-  /* espaço entre a borda do cartão e o conteúdo */
-  background: var(--card);
-  /* fundo branco */
-  border-radius: 20px;
-  /* cantos arredondados */
-  box-shadow: 0 10px 30px rgba(28, 35, 51, 0.12);
-  /* sombra suave: 0 na horizontal */
-  display: flex;
-  /* flexbox para organizar os itens internos */
-  flex-direction: column;
-  /* empilha os itens um embaixo do outro */
-  gap: 10px;
-  /* espaço de 20px entre cada item */
+  width: 100%;                                        /* ocupa toda a largura disponível... */
+  max-width: 420px;                                   /* ...mas nunca passa de 420px */
+  padding: 24px;                                      /* espaço entre a borda do cartão e o conteúdo */
+  background: var(--card);                            /* fundo branco */
+  border-radius: 20px;                                /* cantos arredondados */
+  box-shadow: 0 10px 30px rgba(28, 35, 51, 0.12);   /* sombra suave: 0 na horizontal */
+  display: flex;                                      /* flexbox para organizar os itens internos */
+  flex-direction: column;                             /* empilha os itens um embaixo do outro */
+  gap: 10px;                                          /* espaço de 20px entre cada item */
 }
 
 /* Título pequeno no topo ("Registro de ponto") */
 .device__label {
-  font-size: 0.8rem;
-  /* texto pequeno */
-  font-weight: 600;
-  /* meio negrito */
-  letter-spacing: 0.08em;
-  /* espaço entre as letras */
-  text-transform: uppercase;
-  /* deixa tudo em MAIÚSCULAS */
-  color: var(--muted);
-  /* cinza */
-  text-align: center;
-  /* centralizado */
+  font-size: 0.8rem;         /* texto pequeno */
+  font-weight: 600;          /* meio negrito */
+  letter-spacing: 0.08em;    /* espaço entre as letras */
+  text-transform: uppercase; /* deixa tudo em MAIÚSCULAS */
+  color: var(--muted);       /* cinza */
+  text-align: center;        /* centralizado */
 }
 
 /*  RELÓGIO */
 
 /* Caixa escura que envolve o relógio e a data */
 .display {
-  padding: 5px 20px 15px;
-  /* espaço interno: topo 5, laterais 20, base 26 */
-  background: var(--display-bg);
-  /* fundo escuro */
-  color: var(--display-text);
-  /* texto claro */
-  border-radius: 16px;
-  /* cantos arredondados */
-  text-align: center;
-  /* centraliza os textos */
+  padding: 5px 20px 15px;         /* espaço interno: topo 5, laterais 20, base 26 */
+  background: var(--display-bg);  /* fundo escuro */
+  color: var(--display-text);     /* texto claro */
+  border-radius: 16px;            /* cantos arredondados */
+  text-align: center;              /* centraliza os textos */
 }
 
 /* Os números do relógio (00:00:00) */
 .clock {
-  font-size: clamp(2.4rem, 12vw, 3.4rem);
-  /* tamanho flexível: mínimo 2.4rem, máximo 3.4rem, e no meio acompanha a largura da tela (12vw) */
-  font-weight: 700;
-  /* negrito */
-  font-variant-numeric: tabular-nums;
-  /* todos os dígitos com a mesma largura, assim o relógio não "balança" quando os números mudam */
-  letter-spacing: 0.04em;
-  /* um pouquinho de espaço entre os números */
+  font-size: clamp(2.4rem, 12vw, 3.4rem);  /* tamanho flexível: mínimo 2.4rem, máximo 3.4rem, e no meio acompanha a largura da tela (12vw) */
+  font-weight: 700;                        /* negrito */
+  font-variant-numeric: tabular-nums;      /* todos os dígitos com a mesma largura, assim o relógio não "balança" quando os números mudam */
+  letter-spacing: 0.04em;                  /* um pouquinho de espaço entre os números */
 }
 
 /* Os dois pontos ":" entre horas, minutos e segundos */
 .colon {
-  opacity: 0.6;
-  /* deixa meio transparente */
-  margin: 0 2px;
-  /* 2px de espaço nos lados */
+  opacity: 0.6;   /* deixa meio transparente */
+  margin: 0 2px;  /* 2px de espaço nos lados */
 }
 
 /* A data embaixo do relógio */
 .date {
-  margin-top: 10px;
-  /* afasta 10px do relógio */
-  font-size: 0.95rem;
-  /* tamanho um pouco menor que o normal */
-  color: #aab3cc;
-  /* cinza azulado claro */
-  text-transform: none;
-  /* primeira letra de cada palavra em maiúscula */
+  margin-top: 10px;   /* afasta 10px do relógio */ 
+  font-size: 0.95rem; /* tamanho um pouco menor que o normal */
+  color: #aab3cc;   /* cinza azulado claro */
+  text-transform: none;  /* primeira letra de cada palavra em maiúscula */
 }
 
 /* BOTÃO E MENSAGEM DE STATUS */

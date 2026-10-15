@@ -1,40 +1,21 @@
 :root {
-    --bg: #eef1f4;
-    /* fundo cinza clarinho da página */
-    --surface: #ffffff;
-    /* branco: caixas, campos e linhas */
-    --ink: #1b2733;
-    /* cor do texto principal */
-    --muted: #5e6b78;
-    /* cinza do texto menos importante */
-    --line: #d9dfe5;
-    /* cor das bordinhas */
-    --row-hover: #f5f8fa;
-    /* cor da linha quando passo o mouse */
-    --accent: #151a51;
-    /* azul escuro dos botões */
-    --accent-hover: #2458c4;
-    /* azul mais claro quando passo o mouse no botão */
-    --accent-soft: #dff0f1;
-    /* fundo clarinho do ícone no hover */
-    --focus: #1f6feb;
-    /* contorno azul de quando uso o Tab */
-    --header-bg: #f7f9fb;
-    /* fundo do cabeçalho da tabela */
-    --footer-bg: #151a51;
-    /* fundo da faixa do total */
-    --footer-ink: #ffffff;
-    /* texto branco do total */
-
-    /* NOVO: cores das linhas aprovadas e reprovadas */
-    --ok-bg: #e8f6ed;
-    /* verde clarinho (aprovado) */
-    --ok-ink: #1d7a3e;
-    /* verde do ícone de aprovar */
-    --bad-bg: #fdeceb;
-    /* vermelho clarinho (reprovado) */
-    --bad-ink: #c0392b;
-    /* vermelho do ícone de reprovar */
+    --bg: #eef1f4;            /* fundo cinza clarinho da página */
+    --surface: #ffffff;       /* branco: caixas, campos e linhas */
+    --ink: #1b2733;           /* cor do texto principal */
+    --muted: #5e6b78;         /* cinza do texto menos importante */
+    --line: #d9dfe5;          /* cor das bordinhas */
+    --row-hover: #f5f8fa;     /* cor da linha quando passo o mouse */
+    --accent: #151a51;        /* azul escuro dos botões */
+    --accent-hover: #2458c4;  /* azul mais claro quando passo o mouse no botão */
+    --accent-soft: #dff0f1;   /* fundo clarinho do ícone no hover */
+    --focus: #1f6feb;         /* contorno azul de quando uso o Tab */
+    --header-bg: #f7f9fb;     /* fundo do cabeçalho da tabela */
+    --footer-bg: #151a51;     /* fundo da faixa do total */
+    --footer-ink: #ffffff;    /* texto branco do total */
+    --ok-bg: #e8f6ed;         /* cores das linhas aprovadas e reprovadas */
+    --ok-ink: #1d7a3e;        /* verde do ícone de aprovar */
+    --bad-bg: #fdeceb;        /* vermelho clarinho (reprovado) */
+    --bad-ink: #c0392b;       /* vermelho do ícone de reprovar */
 
     --radius: 8px;
     /* o quanto os cantos são arredondados */
@@ -62,13 +43,8 @@ body {
 }
 
 
-/* =====================================================
-   2) LAYOUT (a organização geral da página)
-   ===================================================== */
+/* LAYOUT */
 
-/* O menu personalizado. Elemento criado por mim começa "inline",
-   então forço virar bloco pra ele se comportar direito.
-   (agora ele fica fora do formulário, em cima da página) */
 my-menu {
     display: block;
 }
@@ -100,9 +76,7 @@ h1 {
 }
 
 
-/* =====================================================
-   3) FILTROS (a caixa branca de cima)
-   ===================================================== */
+/* FILTROS (a caixa branca de cima) */
 
 /* O formulário dos filtros */
 .filters {
@@ -194,9 +168,7 @@ input:focus-visible,
 }
 
 
-/* =====================================================
-   4) TABELA
-   ===================================================== */
+/* TABELA */
 
 /* Caixa que envolve a tabela (se a tabela for larga demais, ganha rolagem
    em vez de cortar o conteúdo) */
@@ -238,7 +210,6 @@ td {
     border-bottom: 1px solid var(--line);
 }
 
-/* A última linha não precisa de borda embaixo, a caixa já tem uma */
 tbody tr:last-child td {
     border-bottom: 0;
 }
@@ -248,7 +219,7 @@ tbody tr:hover {
     background: var(--row-hover);
 }
 
-/* NOVO: linha aprovada fica verdinha e linha reprovada fica vermelhinha.
+/* linha aprovada fica verdinha e linha reprovada fica vermelhinha.
    Tem que ficar DEPOIS do :hover pra ganhar dele. */
 tbody tr.aprovado {
     background: var(--ok-bg);
@@ -282,9 +253,7 @@ td.total {
 }
 
 
-/* =====================================================
-   5) AÇÕES (os ícones de aprovar e reprovar)
-   ===================================================== */
+/* AÇÕES (os ícones de aprovar e reprovar) */
 
 /* Configuração do ícone (espessura, preenchimento...) */
 .material-symbols-outlined {
@@ -404,7 +373,7 @@ tfoot .total-value {
         /* o conteúdo respeita o canto arredondado */
     }
 
-    /* NOVO: as cores de aprovado/reprovado também valem nos cartões.
+    /* as cores de aprovado/reprovado também valem nos cartões.
        Precisei repetir aqui porque a regra acima é mais forte que a de fora */
     .table-width tbody tr.aprovado {
         background: var(--ok-bg);

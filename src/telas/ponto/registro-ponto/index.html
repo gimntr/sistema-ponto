@@ -1,6 +1,12 @@
 <!doctype html>
+<!-- Avisa ao navegador que este arquivo é HTML5. Sempre na primeira linha. -->
+
 <html lang="pt-BR">
+  <!-- Tag principal. lang="pt-BR" informa o idioma (ajuda leitores de tela e tradutores). -->
+
   <head>
+    <!-- O <head> guarda informações SOBRE a página, não o conteúdo visível. -->
+
     <!-- Codificação de caracteres; garante que acentos (ç, ã, é) apareçam certo -->
     <meta charset="UTF-8" />
 
@@ -21,21 +27,29 @@
     <!-- Carrega o arquivo de estilos (cores, layout, fontes) -->
     <link rel="stylesheet" href="style.css" />
 
-    <!-- Carrega o JavaScript (o código do relógio e do registro de ponto).
-       "defer" faz o script só rodar depois que o HTML inteiro foi lido,
-       por isso os getElementById do script encontram os elementos abaixo -->
   </head>
 
   <body>
+    <!-- Tudo o que aparece na tela fica dentro do <body>. -->
+
     <!-- Container principal, estilizado como um "aparelho" de ponto (classe device) -->
     <main class="device">
+      <!-- <main> indica o conteúdo principal da página (bom para acessibilidade). -->
+
       <my-menu></my-menu>
+      <!--
+        Web Component criado por vocês: o JavaScript do menu ensina o
+        navegador a desenhar o menu aqui. Nomes de componentes
+        personalizados sempre têm hífen.
+      -->
+
       <!-- Título/rótulo no topo do aparelho -->
       <p class="device__label">Registro de ponto</p>
 
       <!-- "Visor" do aparelho: relógio e data -->
       <div class="display">
-        <!-- Relógio. O JS (updateClock) troca este conteúdo a cada segundo.
+
+        <!-- Relógio. O JS (atualizarRelogio) troca este conteúdo a cada segundo.
            O "00:00:00" é só o valor inicial, antes do JS carregar.
            aria-live="off": leitores de tela NÃO anunciam cada segundo que passa.
            Os <span class="colon"> permitem estilizar os dois-pontos no CSS -->
@@ -49,6 +63,7 @@
 
       <!-- Área do botão de ação -->
       <div class="actions">
+
         <!-- Botão que o JS escuta (punchBtn) para registrar entrada/saída.
            type="button" evita que ele se comporte como envio de formulário -->
         <button class="punch" id="punchBtn" type="button">
@@ -76,11 +91,21 @@
       </section>
     </main>
 
+    <!-- SCRIPTS (no final do body, depois de todo o HTML) -->
+
     <script src="script.js" defer></script>
+    <!--
+      Carrega o JavaScript da página (relógio e registro de ponto).
+      "defer" faz o script só rodar depois que o HTML inteiro foi lido,
+      por isso os getElementById encontram os elementos acima.
+      (No final do body o defer é opcional, mas não atrapalha.)
+    -->
+
     <script
       type="module"
       src="../components/menu/generate-component.js"
     ></script>
+    <!-- JavaScript do menu, carregado como "module" (permite import/export).
+       É ele que registra o <my-menu> no navegador. -->
   </body>
 </html>
- 

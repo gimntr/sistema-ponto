@@ -1,3 +1,4 @@
+// PEGAR OS ELEMENTOS DA TELA 
 // aqui eu pego cada elemento pelo id que está no HTML
 // e guardo em uma variável pra usar depois
 const clock = document.getElementById('clock');       // o relógio 00:00:00
@@ -7,13 +8,19 @@ const statusEl = document.getElementById('status');   // a mensagem embaixo do b
 const empty = document.getElementById('empty');       // o texto "Nenhum registro ainda hoje."
 const logList = document.getElementById('logList');   // a lista (ul) dos registros
 
+
 // lista com o nome de cada batida do dia, na ordem certa
 // 1ª vez que clica = Entrada, 2ª = Saída almoço, e assim vai
 const tiposDePonto = ['Entrada', 'Saída almoço', 'Retorno almoço', 'Saída'];
+// Uma lista (array) começa a contar do ZERO:
+// posição 0 = 'Entrada', 1 = 'Saída almoço', 2 = 'Retorno almoço', 3 = 'Saída'
 
 // contador pra saber quantas vezes já bateu o ponto hoje
 // começa em 0 porque ainda não bateu nenhum
 let totalRegistros = 0;
+
+
+// FUNÇÕES DE HORA E DATA 
 
 // se o número for 5 vira "05", se for 12 continua "12"
 // String() transforma o número em texto, padStart completa com zero até ter 2 dígitos
@@ -31,6 +38,7 @@ function pegarHoraAtual() {
 
     // junta tudo separado por dois pontos
     return `${horas}:${minutos}:${segundos}`;
+   
 }
 
 function atualizarRelogio() {
@@ -43,6 +51,8 @@ function atualizarRelogio() {
     // aqui uso innerHTML (e não textContent) porque quero manter
     // o <span class="colon"> nos dois pontos, senão perde o estilo do CSS
     clock.innerHTML = `${horas}<span class="colon">:</span>${minutos}<span class="colon">:</span>${segundos}`;
+    // 💡 Dica: essas 3 primeiras linhas repetem o que pegarHoraAtual() já faz.
+    // Não é erro, só código repetido.
 }
 
 function atualizarData() {
@@ -57,31 +67,46 @@ function atualizarData() {
         month: 'long',    // nome do mês
         year: 'numeric'   // ano
     });
+    // 💡 O "capitalize" do CSS põe maiúscula em TODA palavra, então pode
+    // sair "8 De Outubro De 2026". Se incomodar, deixe o texto como está
+    // ou ponha maiúscula só na primeira letra pelo JavaScript.
 }
 
+// ===== REGISTRAR O PONTO =====
 // essa função roda toda vez que o usuário clica no botão
 async function registrarPonto() {
     // se já bateu os 4 pontos do dia, não deixa bater mais
 
+
+    // "Headers" são informações extras enviadas junto com o pedido
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    // avisa ao servidor: "o que estou enviando é JSON"
 
+    // JSON.stringify transforma o objeto em texto JSON, que é o
+    // formato que a internet usa para trafegar dados
     const raw = JSON.stringify({
-    "userCode": "0"
+        "userCode": "0"
     });
+    // userCode fixo em "0": todo mundo bate ponto como o usuário 0.
+    // No sistema real, o código deve vir do login do usuário.
 
     const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow"
+        method: "POST",        // POST = "estou ENVIANDO algo para o servidor"
+        headers: myHeaders,    // os cabeçalhos criados acima
+        body: raw,             // o conteúdo enviado
+        redirect: "follow"     // se o servidor redirecionar, siga
     };
 
     const resposta = await fetch("http://localhost:3000/registroPontoEstag/registra-ponto", requestOptions)
-    .then((response) => response.json())
+        .then((response) => response.json())
+    // fetch envia o pedido, "await" espera a resposta, e o .json()
+    // converte a resposta em um objeto JavaScript
+    // "localhost" só funciona no seu computador (trocar ao publicar).
 
-    if(resposta.data.status != 1)
+    if (resposta.data.status != 1)
         throw new Error('Erro ao registrar ponto: ' + resposta.message);
+    
 
     if (totalRegistros >= tiposDePonto.length) {
         statusEl.textContent = 'Você já registrou todos os pontos de hoje.';
@@ -101,6 +126,8 @@ async function registrarPonto() {
     // coloca o tipo e a hora dentro do item
     // o CSS já separa um de cada lado (justify-content: space-between)
     item.innerHTML = `<span>${tipo}</span><span>${hora}</span>`;
+    // Aqui o innerHTML é seguro, porque "tipo" e "hora" são valores
+    // criados pelo próprio código, não vêm de digitação do usuário.
 
     // prepend coloca o item no começo da lista
     // assim o registro mais recente fica sempre no topo
@@ -120,7 +147,10 @@ async function registrarPonto() {
     if (totalRegistros === tiposDePonto.length) {
         punchBtn.disabled = true;
     }
+  
 }
+
+// LIGAR OS EVENTOS
 
 // quando clicar no botão, chama a função registrarPonto
 punchBtn.addEventListener('click', registrarPonto);
@@ -133,18 +163,27 @@ atualizarData();
 // setInterval repete a função a cada 1000 milissegundos (1 segundo)
 // é isso que faz o relógio andar
 setInterval(atualizarRelogio, 1000);
+
+//  EXPORTAR PARA EXCEL 
 document.getElementById("btnExportar").addEventListener("click", () => {
+  
     const tabela = document.getElementById("tabelaEspelho"); // troque pelo id da sua tabela
+    // tabela do HTML do espelho não tem id="tabelaEspelho.
+    // Sem esse id, "tabela" é null e a exportação quebra.
 
     // raw: true mantém horários como "08:00" em vez de o Excel converter
     const planilha = XLSX.utils.table_to_sheet(tabela, { raw: true });
+    // table_to_sheet lê a tabela HTML e copia para uma planilha.
 
     // Largura das colunas (ajuste a quantidade conforme suas colunas)
     planilha["!cols"] = [{ wch: 12 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 12 }];
+    // wch = largura em quantidade de caracteres
 
-    const livro = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(livro, planilha, "Espelho de Ponto");
+    const livro = XLSX.utils.book_new();                          // cria o arquivo Excel
+    XLSX.utils.book_append_sheet(livro, planilha, "Espelho de Ponto"); // adiciona a aba
 
     const hoje = new Date().toISOString().slice(0, 10);
+    // data de hoje no formato "2026-10-15" (usada no nome do arquivo)
     XLSX.writeFile(livro, `espelho-de-ponto-${hoje}.xlsx`);
+    // gera o arquivo e inicia o download
 });

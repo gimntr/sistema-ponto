@@ -1,114 +1,90 @@
 <!DOCTYPE html>
+<!-- 
+  Diz ao navegador: "este arquivo é HTML5".
+  Sempre deve ser a primeira linha do arquivo.
+-->
+
 <html lang="pt-BR">
+<!-- 
+  Tag principal: tudo da página fica dentro dela.
+  lang="pt-BR" informa que o conteúdo está em português do Brasil
+  (ajuda leitores de tela e tradutores automáticos).
+-->
 
 <head>
+  <!-- 
+    O <head> guarda informações SOBRE a página (configurações, título, 
+    arquivos de estilo). Nada aqui aparece diretamente na tela, 
+    exceto o título na aba do navegador.
+  -->
+
   <meta charset="UTF-8">
+  <!-- 
+    Define a codificação de caracteres. UTF-8 permite acentos e 
+    caracteres especiais (ç, ã, é...) sem aparecerem quebrados.
+  -->
+
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- 
+    Faz a página se adaptar a telas de celular.
+    - width=device-width: usa a largura real da tela do aparelho
+    - initial-scale=1: sem zoom inicial
+    - viewport-fit=cover: ocupa a tela toda (útil em celulares com "notch")
+  -->
+
   <title>Espelho de ponto</title>
+  <!-- Texto que aparece na aba do navegador. -->
+
   <link rel="stylesheet" href="style.css">
+  <!-- 
+    Liga o arquivo de estilos (CSS) da página: cores, tamanhos, layout.
+    "style.css" está na mesma pasta deste HTML.
+  -->
+
   <link rel="stylesheet" href=".../components/menu/generate-component.css">
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <!-- 
+    Carrega a fonte de ícones "Material Symbols" do Google.
+    Com ela você usa ícones (lápis, lixeira, etc.) como se fossem letras.
+  -->
+
   <!-- Só UM script, como module (necessário por causa do import) -->
-   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap">
+  <!-- 
+    Carrega a fonte "Public Sans" do Google Fonts, nos pesos 
+    400 (normal), 600 (semi-negrito) e 700 (negrito).
+    display=swap: mostra o texto com fonte padrão enquanto a fonte baixa.
+  -->
 </head>
 
 <my-menu></my-menu>
+  
+  <!-- <my-menu> é um "Web Component" (elemento personalizado) criado por 
+  vocês. O JavaScript do menu ensina o navegador a desenhar o menu aqui.
+  Nomes de componentes personalizados sempre têm um hífen.
+-->
 
 <body>
+  <!-- 
+    O <body> contém tudo o que aparece na tela: textos, tabelas, 
+    botões, formulários...
+  -->
+
   <div id="menu-container"></div>
+  <!-- 
+    Uma caixa vazia com identificador "menu-container".
+    O JavaScript pode encontrá-la pelo id e colocar algo dentro dela.
+  -->
 
   <div class="wrap">
+    <!-- 
+      "wrap" (embrulho): caixa que envolve todo o conteúdo principal.
+      Normalmente o CSS usa essa classe para centralizar e limitar a largura.
+    -->
+
     <header>
+      <!-- Cabeçalho da página. -->
       <h1>Espelho de ponto</h1>
-    </header>
-
-    <form class="filters" id="filterForm">
-
-      <!-- NOVO: filtro de colaborador -->
-      <div class="field">
-        <label for="colaborador">Colaborador</label>
-        <select id="colaborador" name="colaborador">
-          <option value="">Todos</option>
-          <!-- as opções são criadas pelo JS -->
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="dataInicio">De</label>
-        <input type="date" id="dataInicio" name="dataInicio">
-      </div>
-      <div class="field">
-        <label for="dataFim">Até</label>
-        <input type="date" id="dataFim" name="dataFim">
-      </div>
-      <button type="submit" class="apply">Filtrar</button>
-<button type="button" id="btnExportar" class="btn-cancelar">Exportar para Excel</button>
-    </form>
-
-    <div class="table-panel">
-      <table class="table-width">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Entrada</th>
-            <th>Saída almoço</th>
-            <th>Retorno almoço</th>
-            <th>Saída</th>
-            <th>Horas trabalhadas</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-        <tfoot>
-          <tr>
-            <td class="total-label" data-label="">Total do período</td>
-            <td data-label=""></td>
-            <td data-label=""></td>
-            <td data-label=""></td>
-            <td data-label=""></td>
-            <td class="total-value" id="tfootTotal" data-label="Total">00:00</td>
-            <td data-label=""></td> <!-- célula que faltava (coluna Ações) -->
-          </tr>
-        </tfoot>
-      </table>
-      <div class="empty-state" id="emptyState" style="display:none;">
-        Nenhum lançamento encontrado para o período selecionado.
-      </div>
-    </div>
-  </div>
-  <script src="script.js" defer></script>
-  <script type="module" src="../components/menu/generate-component.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <dialog id="modalEditar">
-  <form id="formEditar">
-    <h2>Editar registro</h2>
-
-    <div class="campo-edicao">
-      <label for="editEntrada">Entrada</label>
-      <input type="time" id="editEntrada" required>
-    </div>
-
-    <div class="campo-edicao">
-      <label for="editSaidaAlmoco">Saída almoço</label>
-      <input type="time" id="editSaidaAlmoco" required>
-    </div>
-
-    <div class="campo-edicao">
-      <label for="editRetornoAlmoco">Retorno almoço</label>
-      <input type="time" id="editRetornoAlmoco" required>
-    </div>
-
-    <div class="campo-edicao">
-      <label for="editSaida">Saída</label>
-      <input type="time" id="editSaida" required>
-    </div>
-
-    <div class="botoes-edicao">
-      <button type="button" id="btnCancelar" class="btn-cancelar">Cancelar</button>
-      <button type="submit" class="apply">Salvar</button>
-    </div>
-  </form>
-</dialog>
-</body>
-
-</html>
+      <!-- Título principal (h1 = o mais
