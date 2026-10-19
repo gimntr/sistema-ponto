@@ -1,291 +1,227 @@
-(async function () {
-    /*
-      Esta é uma "função que se executa sozinha" (IIFE).
-      Os parênteses no começo e o () no final fazem o JavaScript
-      criar a função e rodá-la imediatamente. */
+// Uma IIFE: essa função que se chama sozinha serve para criar uma "bolha".
+// Nada do que está aqui dentro vaza para o resto da página (evita bagunçar outras variáveis).
+(function () {
 
-    // BUSCAR OS DADOS NO SERVIDOR
+    // Cada objeto representa um dia de ponto de alguém.
+    // O 'id' é como o CPF daquela linha específica para não editarmos o dia errado.
+    const registros = [
+        { id: 1, colaborador: 'Ana Souza', data: '2026-09-15', entrada: '08:02', saidaAlmoco: '12:00', retornoAlmoco: '13:01', saida: '17:58' },
+        { id: 2, colaborador: 'Ana Souza', data: '2026-09-16', entrada: '08:05', saidaAlmoco: '12:03', retornoAlmoco: '13:00', saida: '18:10' },
+        { id: 3, colaborador: 'Bruno Lima', data: '2026-09-15', entrada: '09:00', saidaAlmoco: '12:30', retornoAlmoco: '13:30', saida: '18:05' },
+        { id: 4, colaborador: 'Bruno Lima', data: '2026-09-16', entrada: '08:55', saidaAlmoco: '12:28', retornoAlmoco: '13:32', saida: '18:00' },
+        { id: 5, colaborador: 'Carla Mendes', data: '2026-09-15', entrada: '07:30', saidaAlmoco: '11:30', retornoAlmoco: '12:30', saida: '16:35' },
+        { id: 6, colaborador: 'Carla Mendes', data: '2026-09-16', entrada: '07:28', saidaAlmoco: '11:32', retornoAlmoco: '12:31', saida: '16:30' },
+        { id: 7, colaborador: 'Diego Ferreira', data: '2026-09-15', entrada: '08:15', saidaAlmoco: '12:10', retornoAlmoco: '13:10', saida: '17:20' },
+        { id: 8, colaborador: 'Diego Ferreira', data: '2026-09-19', entrada: '08:12', saidaAlmoco: '12:10', retornoAlmoco: '13:08', saida: '16:55' }
+    ];
 
-    const requestOptions = {
-        method: "GET",       // GET = "quero apenas LER dados" (não enviar nada)
-        redirect: "follow"   // se o servidor redirecionar, siga o novo endereço
-    };
+    // Variáveis de controle de estado (mudam com o tempo, por isso 'let'):
+    let idEditando = null; // Guarda na memória qual registro o usuário clicou para editar
+    let listaAtual = [];   // Guarda exatamente o que está aparecendo na tela após filtrar
 
-    const response = await fetch(
-        "http://localhost:3000/registroPontoEstag/espelho-ponto?userCode=0&dataInicio=2026-01-01&dataFim=2026-11-11",
-        requestOptions
-    )
-        .then((response) => response.json());
+    // CAPTURANDO OS ELEMENTOS DO HTML 
+    // O JavaScript precisa "segurar" as tags HTML pelo ID para poder ler ou mudar coisas nelas
+    const form = document.getElementById('filterForm');
+    const tableBody = document.getElementById('tableBody');
+    const tfootTotal = document.getElementById('tfootTotal');
+    const emptyState = document.getElementById('emptyState');
+    const selectColaborador = document.getElementById('colaborador');
 
-    console.log('Resposta do servidor:', response);
-    // Mostra a resposta no Console do navegador (F12). Ótimo para
-    // descobrir o formato dos dados enquanto você desenvolve.
+    // Elementos da caixinha (modal/dialog) que abre quando clicamos em editar
+    const modalEditar = document.getElementById('modalEditar');
+    const formEditar = document.getElementById('formEditar');
+    const editEntrada = document.getElementById('editEntrada');
+    const editSaidaAlmoco = document.getElementById('editSaidaAlmoco');
+    const editRetornoAlmoco = document.getElementById('editRetornoAlmoco');
+    const editSaida = document.getElementById('editSaida');
+    const btnCancelar = document.getElementById('btnCancelar');
 
-    const registros = response.data;
+    // FUNÇÕES AUXILIARES DE CÁLCULO E FORMATAÇÃO 
 
-    // VARIÁVEIS QUE GUARDAM O "ESTADO" DA PÁGINA 
-
-    // guarda o id do registro que está sendo editado agora
-    let idEditando = null;
-    // "let" (e não "const") porque o valor vai mudar ao longo do tempo.
-    // null = "nenhum registro sendo editado por enquanto".
-
-    // guarda a lista que está na tela agora (para exportar o que está filtrado)
-    let listaAtual = [];
-    // Começa como lista vazia []. É atualizada toda vez que a tabela é desenhada.
-
-    // ELEMENTOS DA TELA
-    /*
-      document.getElementById("x") procura no HTML o elemento com id="x".
-      Guardamos em variáveis para não precisar procurar de novo toda hora.
-      Os ids abaixo são os mesmos que escrevemos no HTML.
-    */
-    const form = document.getElementById('filterForm');           // formulário de filtros
-    const tableBody = document.getElementById('tableBody');       // corpo da tabela (começa vazio)
-    const tfootTotal = document.getElementById('tfootTotal');     // célula do total de horas
-    const emptyState = document.getElementById('emptyState');     // aviso "nenhum lançamento"
-    const selectColaborador = document.getElementById('colaborador'); // dropdown de colaboradores
-
-    // elementos da janelinha de edição (o <dialog> do HTML)
-    const modalEditar = document.getElementById('modalEditar');          // a janelinha em si
-    const formEditar = document.getElementById('formEditar');            // formulário dentro dela
-    const editEntrada = document.getElementById('editEntrada');          // campo "Entrada"
-    const editSaidaAlmoco = document.getElementById('editSaidaAlmoco');  // campo "Saída almoço"
-    const editRetornoAlmoco = document.getElementById('editRetornoAlmoco'); // campo "Retorno almoço"
-    const editSaida = document.getElementById('editSaida');              // campo "Saída"
-    const btnCancelar = document.getElementById('btnCancelar');          // botão "Cancelar"
-
-    // FUNÇÕES DE HORÁRIO
-    /*
-      Computadores calculam melhor com números do que com texto.
-      Por isso convertemos "08:30" em minutos, fazemos as contas
-      e depois convertemos de volta para "hh:mm" para mostrar.
-    */
-
-    // "08:30" vira 510 (minutos desde meia-noite)
+    // Fazer contas com texto como "08:30" é horrível.
+    // O truque: converter tudo para minutos inteiros (ex: 8 * 60 + 30 = 510 min).
     function paraMinutos(hhmm) {
-        const [h, m] = hhmm.split(':').map(Number);
-        /*
-          .split(':') quebra o texto no ":" -> "08:30" vira ["08", "30"]
-          .map(Number) transforma cada pedaço em número -> [8, 30]
-          "const [h, m] = ..." (desestruturação) coloca o primeiro valor
-          em "h" e o segundo em "m".
-        */
-        return h * 60 + m; // 8 * 60 + 30 = 510
+        const [h, m] = hhmm.split(':').map(Number); // quebra no ":" e converte pra número
+        return h * 60 + m;
     }
 
-    // 510 vira "08:30". Se for negativo, coloca "-" na frente
+    // O caminho inverso: pega minutos (510) e devolve texto bonito ("08:30")
     function paraHHMM(minutosTotais) {
         const sinal = minutosTotais < 0 ? '-' : '';
-        // Operador ternário: "condição ? valor se verdadeiro : valor se falso"
-        const abs = Math.abs(minutosTotais);       // valor absoluto (tira o sinal negativo)
-        const h = Math.floor(abs / 60);            // horas inteiras (arredonda para baixo)
-        const m = abs % 60;                        // "%" = resto da divisão = minutos que sobraram
+        const abs = Math.abs(minutosTotais); // ignora o sinal negativo pra calcular as horas
+        const h = Math.floor(abs / 60);      // quantas horas inteiras cabem
+        const m = abs % 60;                  // o que sobra da divisão são os minutos
+        // padStart(2, '0') garante que o número 8 fique "08"
         return `${sinal}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-        /*
-          padStart(2, '0') completa com zero à esquerda até ter 2 dígitos:
-          "5" vira "05". Assim ficamos com "08:05" em vez de "8:5".
-          As crases ` ` permitem montar texto com ${variáveis} dentro.
-        */
     }
 
-    // (saída almoço - entrada) + (saída - retorno almoço)
+    // Calcula o turno da manhã + turno da tarde para um dia
     function horasTrabalhadasMin(r) {
         const manha = paraMinutos(r.saidaAlmoco) - paraMinutos(r.entrada);
-        // período da manhã: do começo do trabalho até a ida para o almoço
         const tarde = paraMinutos(r.saida) - paraMinutos(r.retornoAlmoco);
-        // período da tarde: da volta do almoço até ir embora
-        return manha + tarde; // total trabalhado no dia, em minutos
-        // (ex.: entra 22:00, sai 06:00), pois o resultado ficaria negativo.
+        return manha + tarde;
     }
 
-    // PREENCHER A LISTA DE COLABORADORES 
+    // Transforma a data do padrão americano do input (AAAA-MM-DD) para o brasileiro (DD/MM/AAAA)
+    function formatarData(iso) {
+        const [ano, mes, dia] = iso.split('-');
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    // CARREGAR OS NOMES NO <select> 
     function preencherColaboradores() {
-        // Set tira os nomes repetidos, sort() põe em ordem alfabética
+        // Set é mágico: remove automaticamente qualquer valor duplicado.
+        // O sort() coloca os nomes em ordem A-Z.
         const nomes = [...new Set(registros.map(r => r.colaborador))].sort();
-        /*
-          Passo a passo:
-          1) registros.map(r => r.colaborador) -> lista só com os nomes
-             (com repetições: ["Ana", "Ana", "Bruno", "Ana"])
-          2) new Set(...) -> remove os repetidos (Ana, Bruno)
-          3) [...] -> transforma o Set de volta em uma lista comum
-          4) .sort() -> ordem alfabética
-        */
 
-        // começa com a opção "Todos" (value vazio = sem filtro)
+        // Limpa o select e deixa a primeira opção como "Todos"
         selectColaborador.innerHTML = '<option value="">Todos</option>';
-        // innerHTML substitui TUDO que havia dentro do <select>.
 
+        // Cria uma tag <option> para cada nome e joga dentro do <select>
         nomes.forEach(nome => {
-            // forEach repete o bloco abaixo para cada nome da lista
             const option = document.createElement('option');
-            // cria um novo elemento <option> na memória (ainda não está na tela)
-            option.value = nome;          // valor interno da opção
-            option.textContent = nome;    // texto que o usuário vê
+            option.value = nome;
+            option.textContent = nome;
             selectColaborador.appendChild(option);
-            // agora sim: coloca a opção dentro do <select>
         });
     }
 
-    // DESENHAR A TABELA 
+    // DESENHAR A TABELA NO NAVEGADOR 
     function render(lista) {
-        listaAtual = lista;       // guarda o que está na tela (usado na exportação)
-        tableBody.innerHTML = ''; // limpa as linhas antigas antes de redesenhar
+        listaAtual = lista; // salva a lista visível para podermos exportar depois
+        tableBody.innerHTML = ''; // limpa a tabela antes de desenhar tudo de novo
 
-        // sem registros: mostra o aviso e zera o total
+        // Se o filtro não achar nada, mostra o aviso amigável e zera as horas
         if (lista.length === 0) {
-            emptyState.style.display = 'block'; // mostra a mensagem de "nada encontrado"
-            tfootTotal.textContent = '00:00';   // zera o total
-            return;                             // "return" encerra a função aqui
+            emptyState.style.display = 'block';
+            tfootTotal.textContent = '00:00';
+            return;
         }
 
-        emptyState.style.display = 'none'; // tem registros: esconde o aviso
+        emptyState.style.display = 'none';
 
-        let totalMin = 0; // acumulador: soma os minutos de todos os dias
+        let totalMin = 0; // acumulador para somar todas as horas
 
         lista
-            .slice()                                    // cópia pra não mexer no original
-            .sort((a, b) => (a.data < b.data ? -1 : 1)) // data mais antiga primeiro
-            /*
-              sort() com função: se retornar -1, "a" vem antes de "b";
-              se retornar 1, "a" vem depois.
-              Comparar texto funciona aqui porque as datas estão no formato
-              "AAAA-MM-DD" (ano primeiro), então a ordem alfabética
-              é igual à ordem cronológica.
-              O .slice() faz uma cópia: sort() altera a lista original,
-              e não queremos bagunçar a ordem dos "registros".
-            */
+            .slice() // faz uma cópia rasa para não reordenar o array original por acidente
+            .sort((a, b) => (a.data < b.data ? -1 : 1)) // ordena do dia mais antigo ao mais novo
             .forEach(r => {
-                const minutos = horasTrabalhadasMin(r); // horas do dia, em minutos
-                totalMin += minutos;                    // soma ao total (+= significa "some a")
+                const minutos = horasTrabalhadasMin(r);
+                totalMin += minutos;
 
-                const tr = document.createElement('tr'); // cria uma linha nova da tabela
+                const tr = document.createElement('tr');
 
-                // O lápis agora tem data-acao="editar" e data-id.
-                // É assim que o clique sabe QUAL linha é.
+                // Monta a linha com os dados do registro.
+                // Repare no data-id="${r.id}": colocamos uma "etiqueta" no ícone do lápis
+                // para sabermos exatamente qual linha foi clicada.
                 tr.innerHTML = `
-          <td class="date" data-label="Data">${r.data}</td>
-          <td class="time" data-label="Entrada">${r.entrada}</td>
-          <td class="time" data-label="Saída almoço">${r.saidaAlmoco}</td>
-          <td class="time" data-label="Retorno almoço">${r.retornoAlmoco}</td>
-          <td class="time" data-label="Saída">${r.saida}</td>
-          <td class="total" data-label="Horas trabalhadas">${paraHHMM(minutos)}</td>
-          <td class="acoes" data-label="Ações">
-            <span class="material-symbols-outlined"
-                  data-acao="editar"
-                  data-id="${r.id}"
-                  title="Editar"
-                  tabindex="0">edit</span>
-          </td>
-        `;
-                tableBody.appendChild(tr); // coloca a linha pronta dentro da tabela
+                    <td class="date" data-label="Data">${formatarData(r.data)}</td>
+                    <td class="time" data-label="Entrada">${r.entrada}</td>
+                    <td class="time" data-label="Saída almoço">${r.saidaAlmoco}</td>
+                    <td class="time" data-label="Retorno almoço">${r.retornoAlmoco}</td>
+                    <td class="time" data-label="Saída">${r.saida}</td>
+                    <td class="total" data-label="Horas trabalhadas">${paraHHMM(minutos)}</td>
+                    <td class="acoes" data-label="Ações">
+                        <span class="material-symbols-outlined"
+                              data-acao="editar"
+                              data-id="${r.id}"
+                              title="Editar"
+                              tabindex="0">edit</span>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
             });
 
-        tfootTotal.textContent = paraHHMM(totalMin); // mostra o total no rodapé
+        // Atualiza o rodapé com a soma total formatada em HH:MM
+        tfootTotal.textContent = paraHHMM(totalMin);
     }
 
-    // ===== FILTROS =====
+    // LÓGICA DO FILTRO 
     function aplicarFiltros() {
-        // lê o que a pessoa escolheu nos campos
         const colaborador = selectColaborador.value;
         const dataInicio = document.getElementById('dataInicio').value;
         const dataFim = document.getElementById('dataFim').value;
 
-        // campo vazio = não filtra por ele
+        // O filter passa por cada item: só passa quem atender todas as condições.
+        // Se o campo do filtro estiver vazio, a condição sempre passa como verdadeira.
         const filtrados = registros.filter(r =>
             (colaborador === '' || r.colaborador === colaborador) &&
             (dataInicio === '' || r.data >= dataInicio) &&
             (dataFim === '' || r.data <= dataFim)
         );
 
-        render(filtrados); // desenha só os filtrados
-    } 
+        render(filtrados); // redesenha a tabela só com os que passaram no teste
+    }
 
-    // CLIQUE NO LÁPIS
-    // Um ouvinte só no <tbody> atende todas as linhas,
-    // inclusive as que o JavaScript cria depois.
-    tableBody.addEventListener('click', async e => {
-    
-
-        // procura o elemento clicado que tenha data-acao
+    // DETECTANDO O CLIQUE NO LÁPIS (Event Delegation) 
+    // Em vez de colocar 50 ouvintes de clique em cada botãozinho,
+    // colocamos um só no corpo da tabela (tbody). Ele "escuta" tudo que sobe até ele.
+    tableBody.addEventListener('click', e => {
+        // Verifica se o que foi clicado (ou o pai dele) tem o atributo data-acao
         const botao = e.target.closest('[data-acao]');
-        // e.target = o que foi clicado exatamente.
-        // closest() sobe na hierarquia até achar algo com data-acao.
+        if (!botao) return; // se clicou no meio do texto ou no espaço em branco, não faz nada
 
-        if (!botao) return; // clicou em outra coisa, ignora
+        const id = Number(botao.dataset.id);
+        const acao = botao.dataset.acao;
 
-        const id = botao.dataset.id;     // lê o data-id do lápis
-        const acao = botao.dataset.acao; // lê o data-acao ("editar")
-
-        // acha o registro que tem esse id
+        // Procura no array o objeto exato que tem esse ID
         const registro = registros.find(r => r.id === id);
-
-        if (!registro) return; // não achou? não faz nada
+        if (!registro) return;
 
         if (acao === 'editar') {
-            idEditando = id; // lembra quem estamos editando
+            idEditando = id; // memoriza quem estamos editando agora
 
-            // preenche a janelinha com os horários atuais
+            // Carrega os valores atuais daquele dia nos campos da caixinha (modal)
             editEntrada.value = registro.entrada;
             editSaidaAlmoco.value = registro.saidaAlmoco;
             editRetornoAlmoco.value = registro.retornoAlmoco;
             editSaida.value = registro.saida;
 
-            modalEditar.showModal(); // abre a janelinha
-            // showModal() é um método nativo do <dialog>: abre como pop-up
-            // e escurece o fundo.
+            // showModal() é um método nativo das tags <dialog> modernas do HTML
+            modalEditar.showModal();
         }
     });
 
-    // SALVAR A EDIÇÃO 
-    formEditar.addEventListener('submit', async e => {
-        e.preventDefault(); // não deixa a página recarregar
-        // Todo formulário, por padrão, recarrega a página ao ser enviado.
-        // preventDefault() cancela esse comportamento padrão.
+    // ===== SALVAR AS ALTERAÇÕES DO MODAL =====
+    formEditar.addEventListener('submit', e => {
+        e.preventDefault(); // impede que a página recarregue e perca os dados
 
         const registro = registros.find(r => r.id === idEditando);
-        // procura o registro que estava sendo editado 
         if (!registro) return;
 
-        // troca os horários antigos pelos novos
+        // Sobrescreve as propriedades do objeto com o que o usuário digitou
         registro.entrada = editEntrada.value;
         registro.saidaAlmoco = editSaidaAlmoco.value;
         registro.retornoAlmoco = editRetornoAlmoco.value;
         registro.saida = editSaida.value;
 
-        // (O endereço e o formato exato dependem da sua API.)
-
-        modalEditar.close();  // fecha a janelinha
-        aplicarFiltros();     // redesenha mantendo os filtros e recalcula o total
+        modalEditar.close();  // fecha a caixinha
+        aplicarFiltros();     // redesenha a tabela com os novos valores e recalcula o total
     });
 
-    // CANCELAR
-    btnCancelar.addEventListener('click', async () => {
-        modalEditar.close(); // só fecha, não salva nada
-        // (de novo, o "async" aqui não é necessário)
+    // ===== BOTÃO CANCELAR =====
+    btnCancelar.addEventListener('click', () => {
+        modalEditar.close(); // fecha sem alterar nada
     });
 
-    // FILTRAR 
+    // ===== QUANDO CLICAR NO BOTÃO DE FILTRAR =====
     form.addEventListener('submit', e => {
-        e.preventDefault(); // evita recarregar a página
-        aplicarFiltros();   // aplica os filtros escolhidos
+        e.preventDefault(); // evita o recarregamento da página ao dar submit
+        aplicarFiltros();
     });
 
-    // EXPORTAR PARA EXCEL
-    document.getElementById('btnExportar').addEventListener('click', async () => {
-        // Se não há nada na tela, avisa e para.
+    // ===== EXPORTAR PARA PLANILHA EXCEL =====
+    document.getElementById('btnExportar').addEventListener('click', () => {
         if (listaAtual.length === 0) {
-            alert('Não há registros para exportar.'); // caixinha de aviso do navegador
+            alert('Não há registros para exportar.');
             return;
         }
 
-        // ordena do mais antigo para o mais novo (igual à tabela da tela)
         const ordenada = listaAtual.slice().sort((a, b) => (a.data < b.data ? -1 : 1));
 
         let totalMin = 0;
-
-        // "aoa" = array of arrays (lista de listas): cada lista interna
-        // é uma LINHA da planilha. A primeira é o cabeçalho.
+        // Monta a estrutura da planilha como se fosse uma matriz (linhas e colunas):
+        // A primeira linha são os cabeçalhos das colunas
         const linhas = [
             ['Colaborador', 'Data', 'Entrada', 'Saída almoço', 'Retorno almoço', 'Saída', 'Horas trabalhadas']
         ];
@@ -293,10 +229,9 @@
         ordenada.forEach(r => {
             const minutos = horasTrabalhadasMin(r);
             totalMin += minutos;
-            // adiciona uma linha com os dados deste registro
             linhas.push([
                 r.colaborador,
-                r.data,
+                formatarData(r.data),
                 r.entrada,
                 r.saidaAlmoco,
                 r.retornoAlmoco,
@@ -305,27 +240,20 @@
             ]);
         });
 
-        // última linha: o total (as aspas vazias deixam as células em branco)
+        // Adiciona a última linha com o total geral
         linhas.push(['Total do período', '', '', '', '', '', paraHHMM(totalMin)]);
 
+        // Usa a biblioteca SheetJS (objeto global XLSX) para gerar o arquivo
         const planilha = XLSX.utils.aoa_to_sheet(linhas);
-        // transforma a lista de listas em uma "planilha" (usa a biblioteca XLSX
-        // carregada no HTML)
-
-        planilha['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 10 }, { wch: 14 }, { wch: 16 }, { wch: 10 }, { wch: 18 }];
-        // define a largura de cada coluna (wch = quantidade de caracteres)
+        planilha['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 10 }, { wch: 14 }, { wch: 16 }, { wch: 10 }, { wch: 18 }]; // largura das colunas
 
         const livro = XLSX.utils.book_new();
-        // cria o "livro" (arquivo Excel), que pode ter várias abas
-
         XLSX.utils.book_append_sheet(livro, planilha, 'Espelho de Ponto');
-        // adiciona a planilha ao livro, com o nome de aba "Espelho de Ponto"
-
         XLSX.writeFile(livro, `espelho-de-ponto-${new Date().toISOString().slice(0, 10)}.xlsx`);
-
     });
 
-    // AO ABRIR A PÁGINA 
-    preencherColaboradores(); // monta a lista de colaboradores no dropdown
-    aplicarFiltros();         // desenha a tabela pela primeira vez
-})(); 
+    // INICIALIZAÇÃO
+    // Assim que a página abre, roda essas duas para a tela não começar vazia
+    preencherColaboradores();
+    aplicarFiltros();
+})();

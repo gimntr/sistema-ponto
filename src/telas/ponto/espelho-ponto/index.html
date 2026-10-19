@@ -1,90 +1,162 @@
+<!-- Avisa ao navegador que este documento segue o padrão moderno do HTML5 -->
 <!DOCTYPE html>
-<!-- 
-  Diz ao navegador: "este arquivo é HTML5".
-  Sempre deve ser a primeira linha do arquivo.
--->
-
+<!-- 'lang="pt-BR"' avisa que a página está em português (ótimo para leitores de tela e SEO) -->
 <html lang="pt-BR">
-<!-- 
-  Tag principal: tudo da página fica dentro dela.
-  lang="pt-BR" informa que o conteúdo está em português do Brasil
-  (ajuda leitores de tela e tradutores automáticos).
--->
 
 <head>
-  <!-- 
-    O <head> guarda informações SOBRE a página (configurações, título, 
-    arquivos de estilo). Nada aqui aparece diretamente na tela, 
-    exceto o título na aba do navegador.
-  -->
-
+  <!-- Permite acentos e caracteres especiais como ç, ã, é sem quebrar a tela -->
   <meta charset="UTF-8">
-  <!-- 
-    Define a codificação de caracteres. UTF-8 permite acentos e 
-    caracteres especiais (ç, ã, é...) sem aparecerem quebrados.
-  -->
-
+  <!-- Garante que o site se adapte bem à tela de celulares (responsividade) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <!-- 
-    Faz a página se adaptar a telas de celular.
-    - width=device-width: usa a largura real da tela do aparelho
-    - initial-scale=1: sem zoom inicial
-    - viewport-fit=cover: ocupa a tela toda (útil em celulares com "notch")
-  -->
-
   <title>Espelho de ponto</title>
-  <!-- Texto que aparece na aba do navegador. -->
 
+  <!-- Nossos arquivos de estilo (CSS) que dão cor e formato aos elementos -->
   <link rel="stylesheet" href="style.css">
-  <!-- 
-    Liga o arquivo de estilos (CSS) da página: cores, tamanhos, layout.
-    "style.css" está na mesma pasta deste HTML.
-  -->
-
   <link rel="stylesheet" href=".../components/menu/generate-component.css">
 
+  <!-- Ícones do Google Fonts (usado para desenhar o lápis de editar) -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-  <!-- 
-    Carrega a fonte de ícones "Material Symbols" do Google.
-    Com ela você usa ícones (lápis, lixeira, etc.) como se fossem letras.
-  -->
-
-  <!-- Só UM script, como module (necessário por causa do import) -->
-
+  
+  <!-- Fonte bonita chamada 'Public Sans' trazida do Google Fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap">
-  <!-- 
-    Carrega a fonte "Public Sans" do Google Fonts, nos pesos 
-    400 (normal), 600 (semi-negrito) e 700 (negrito).
-    display=swap: mostra o texto com fonte padrão enquanto a fonte baixa.
-  -->
 </head>
 
-<my-menu></my-menu>
-  
-  <!-- <my-menu> é um "Web Component" (elemento personalizado) criado por 
-  vocês. O JavaScript do menu ensina o navegador a desenhar o menu aqui.
-  Nomes de componentes personalizados sempre têm um hífen.
--->
-
+<!-- ATENÇÃO DE INICIANTE: o <my-menu> estava solto antes do <body>! 
+     Tudo o que aparece na tela precisa obrigatoriamente ficar dentro de <body>. -->
 <body>
-  <!-- 
-    O <body> contém tudo o que aparece na tela: textos, tabelas, 
-    botões, formulários...
-  -->
+  <!-- Tag customizada (Web Component) que monta o seu menu dinamicamente -->
+  <my-menu></my-menu>
 
+  <!-- Div auxiliar para carregar itens ou estrutura do menu se necessário -->
   <div id="menu-container"></div>
-  <!-- 
-    Uma caixa vazia com identificador "menu-container".
-    O JavaScript pode encontrá-la pelo id e colocar algo dentro dela.
-  -->
 
+  <!-- 'wrap' (ou container) é o embrulho geral que centraliza o conteúdo na tela -->
   <div class="wrap">
-    <!-- 
-      "wrap" (embrulho): caixa que envolve todo o conteúdo principal.
-      Normalmente o CSS usa essa classe para centralizar e limitar a largura.
-    -->
-
     <header>
-      <!-- Cabeçalho da página. -->
       <h1>Espelho de ponto</h1>
-      <!-- Título principal (h1 = o mais
+    </header>
+
+    <!-- Formulário onde o usuário escolhe filtros de data e colaborador -->
+    <form class="filters" id="filterForm">
+
+      <!-- Campo de seleção de colaborador -->
+      <div class="field">
+        <label for="colaborador">Colaborador</label>
+        <select id="colaborador" name="colaborador">
+          <option value="">Todos</option>
+          <!-- As outras opções de nomes são injetadas aqui pelo script JS -->
+        </select>
+      </div>
+
+      <!-- Campo de data inicial -->
+      <div class="field">
+        <label for="dataInicio">De</label>
+        <input type="date" id="dataInicio" name="dataInicio">
+      </div>
+
+      <!-- Campo de data final -->
+      <div class="field">
+        <label for="dataFim">Até</label>
+        <input type="date" id="dataFim" name="dataFim">
+      </div>
+
+      <!-- 'type="submit"' dispara o evento de filtrar quando clicado ou quando damos Enter -->
+      <button type="submit" class="apply">Filtrar</button>
+
+      <!-- 'type="button"' é FUNDAMENTAL aqui: se não colocar, o navegador acha que é 
+           um submit e recarrega a página ao clicar em exportar -->
+      <button type="button" id="btnExportar" class="btn-cancelar">Exportar para Excel</button>
+    </form>
+
+    <!-- Painel que abriga a tabela e permite barra de rolagem lateral no celular -->
+    <div class="table-panel">
+      <table class="table-width">
+        <!-- <thead>: Cabeçalho com os títulos de cada coluna -->
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Entrada</th>
+            <th>Saída almoço</th>
+            <th>Retorno almoço</th>
+            <th>Saída</th>
+            <th>Horas trabalhadas</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <!-- <tbody>: Onde as linhas com os registros de ponto entram via JavaScript.
+             Ele começa vazio porque o JS preenche logo que a página abre -->
+        <tbody id="tableBody"></tbody>
+
+        <!-- <tfoot>: Rodapé fixo da tabela, reservado para o cálculo total das horas -->
+        <tfoot>
+          <tr>
+            <td class="total-label" data-label="">Total do período</td>
+            <!-- As células vazias <td> servem apenas para manter o alinhamento das 7 colunas -->
+            <td data-label=""></td>
+            <td data-label=""></td>
+            <td data-label=""></td>
+            <td data-label=""></td>
+            <td class="total-value" id="tfootTotal" data-label="Total">00:00</td>
+            <td data-label=""></td> <!-- Célula de fechamento sob a coluna "Ações" -->
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Mensagem amigável que só aparece se a busca não encontrar nenhum registro -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        Nenhum lançamento encontrado para o período selecionado.
+      </div>
+    </div>
+  </div>
+
+  <!-- A tag <dialog> é um modal nativo do HTML moderno. 
+       Por padrão fica invisível até chamarmos .showModal() no JS -->
+  <dialog id="modalEditar">
+    <form id="formEditar">
+      <h2>Editar registro</h2>
+
+      <!-- 'type="time"' abre o seletor nativo de relógio e aceita formato HH:MM -->
+      <!-- 'required' impede salvar caso o usuário apague e deixe o campo em branco -->
+      <div class="campo-edicao">
+        <label for="editEntrada">Entrada</label>
+        <input type="time" id="editEntrada" required>
+      </div>
+
+      <div class="campo-edicao">
+        <label for="editSaidaAlmoco">Saída almoço</label>
+        <input type="time" id="editSaidaAlmoco" required>
+      </div>
+
+      <div class="campo-edicao">
+        <label for="editRetornoAlmoco">Retorno almoço</label>
+        <input type="time" id="editRetornoAlmoco" required>
+      </div>
+
+      <div class="campo-edicao">
+        <label for="editSaida">Saída</label>
+        <input type="time" id="editSaida" required>
+      </div>
+
+      <div class="botoes-edicao">
+        <!-- 'type="button"' para o Cancelar só rodar a função de fechar sem enviar o formulário -->
+        <button type="button" id="btnCancelar" class="btn-cancelar">Cancelar</button>
+        <!-- 'type="submit"' aciona a gravação dos novos horários -->
+        <button type="submit" class="apply">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!--CARREGAMENTO DOS SCRIPTS (no fim do body para a página carregar mais rápido)-->
+  
+  <!-- 'defer' faz o script.js esperar o HTML carregar por inteiro antes de rodar -->
+  <script src="script.js" defer></script>
+  
+  <!-- Script que define a lógica do componente customizado de menu -->
+  <script type="module" src="../components/menu/generate-component.js"></script>
+  
+  <!-- Biblioteca externa SheetJS necessária para o botão de exportar gerar o .xlsx -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</body>
+
+</html>
