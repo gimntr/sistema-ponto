@@ -19,44 +19,80 @@ app.use(express.json());
 // fica na memória, então se o servidor reiniciar ela zera
 const registros = [];
 
+//O servidor decide qual é a batida
+const tiposDePonto = ['Entrada', 'Saída almoço', 'Retorno almoço', 'Saída'];
+
 // rota de teste: se eu abrir localhost:3000 aparece essa mensagem
 // serve só pra ver se o servidor está funcionando
 app.get('/', (req, res) => {
-  res.send('Hello, world!');
+    res.send('Hello, world!');
 });
 
 // rota que a tela chama quando clica em "Registrar ponto"
 // req = o que a tela mandou, res = o que eu respondo pra ela
 app.post('/registroPontoEstag/registra-ponto', (req, res) => {
 
-  // mostra no terminal o que chegou, pra eu conferir se deu certo
-  console.log('Recebi:', req.body);
+    const hoje = new Date().toDateString(); // transforma a data de agora em um texto só com o dia
 
-  // monto a "ficha" da batida com o código do usuário e a hora de agora
-  // a hora é pega aqui no servidor pra ninguém conseguir mudar
-  const novoRegistro = {
-    userCode: req.body.userCode,
-    dataHora: new Date()
-  };
+    const registrosDeHoje = registros.filter(r =>
+        // percorre a lista e guarda só os itens que passam no teste.
+        r.userCode === req.body.userCode && r.dataHora.toDateString() === hoje
+    );
 
-  // coloco a ficha no final da lista
-  registros.push(novoRegistro);
+    console.log('Já bateu hoje:', registrosDeHoje.length);
+    // é a quantidade de itens que sobraram, ou seja, quantas batidas ele já fez hoje.
 
-  // respondo pra tela no formato que ela espera
-  // status 1 quer dizer que deu tudo certo
-  res.json({
-    data: { status: 1 },
-    message: 'Ponto registrado'
-  });
+    // vale 4, a quantidade de batidas possíveis no dia.
+    // pergunta: “ele já bateu 4 vezes ou mais?”. Se sim, entra nas chaves.
+    // O return faz a rota parar ali. O código de baixo (que guarda a batida) não roda, então a quinta batida nunca entra na lista.
+    if (registrosDeHoje.length >= tiposDePonto.length) {
+        return res.json({
+            data: { status: 0 },
+            message: 'Você já registrou todos os pontos de hoje'
+        });
+    }
+
+    const tipo = tiposDePonto[registrosDeHoje.length];
+    console.log('Tipo desta batida:', tipo);
+
+    // mostra no terminal o que chegou, pra eu conferir se deu certo
+    console.log('Recebi:', req.body);
+
+    // monto a "ficha" da batida com o código do usuário e a hora de agora
+    // a hora é pega aqui no servidor pra ninguém conseguir mudar
+    const novoRegistro = {
+        userCode: req.body.userCode,
+        tipo: tipo,
+        dataHora: new Date()
+    };
+
+    registros.push(novoRegistro);
+
+    res.json({
+        data: { status: 1, tipo: tipo },
+        message: 'Ponto registrado'
+    });
 });
 
 // rota pra eu ver tudo que já foi guardado
 // abro localhost:3000/registros no navegador e a lista aparece
 app.get('/registros', (req, res) => {
-  res.json(registros);
+    res.json(registros);
 });
 
+app.get ('/registroPontoEstag/registros-hoje', (req, res) => {
+    const hoje = new Date (). toDateString();
+    
+    const registrosDeHoje = registros.filter(r =>
+        r.userCode === req.query.userCode && r.dataHora.toDateString() === hoje
+    );
+
+    res.json ({
+        data: { status:1,  registros: registrosDeHoje },
+        message: 'ok'
+    });
+});
 // liga o servidor na porta 3000 e avisa no terminal
 app.listen(3000, () => {
-  console.log('Servidor rodando na porta 3000');
+    console.log('Servidor rodando na porta 3000');
 });

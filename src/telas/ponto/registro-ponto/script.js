@@ -3,7 +3,7 @@
 // e guardo em uma variável pra usar depois
 const clock = document.getElementById('clock');       // o relógio 00:00:00
 const dateEl = document.getElementById('date');       // o texto da data
-const punchBtn = document.getElementById('punchBtn'); // o botão "Registrar ponto"
+const btnExportar = document.getElementById('btnExportar'); // o botão "Registrar ponto"
 const statusEl = document.getElementById('status');   // a mensagem embaixo do botão
 const empty = document.getElementById('empty');       // o texto "Nenhum registro ainda hoje."
 const logList = document.getElementById('logList');   // a lista (ul) dos registros
@@ -115,7 +115,7 @@ async function registrarPonto() {
 
     // descobre qual é o tipo desse ponto usando o contador como posição na lista
     // (posição 0 = Entrada, 1 = Saída almoço...)
-    const tipo = tiposDePonto[totalRegistros];
+const tipo = resposta.data.tipo;
 
     // pega a hora exata do clique
     const hora = pegarHoraAtual();
@@ -145,7 +145,7 @@ async function registrarPonto() {
 
     // se chegou nos 4 pontos, desativa o botão pra não clicar mais
     if (totalRegistros === tiposDePonto.length) {
-        punchBtn.disabled = true;
+        btnExportar.disabled = true;
     }
   
 }
@@ -153,7 +153,7 @@ async function registrarPonto() {
 // LIGAR OS EVENTOS
 
 // quando clicar no botão, chama a função registrarPonto
-punchBtn.addEventListener('click', registrarPonto);
+btnExportar.addEventListener('click', registrarPonto);
 
 // chama as duas uma vez logo de cara
 // senão ficaria "00:00:00" e "carregando data..." por 1 segundo
@@ -163,27 +163,3 @@ atualizarData();
 // setInterval repete a função a cada 1000 milissegundos (1 segundo)
 // é isso que faz o relógio andar
 setInterval(atualizarRelogio, 1000);
-
-//  EXPORTAR PARA EXCEL 
-document.getElementById("btnExportar").addEventListener("click", () => {
-  
-    const tabela = document.getElementById("tabelaEspelho"); // troque pelo id da sua tabela
-    // tabela do HTML do espelho não tem id="tabelaEspelho.
-    // Sem esse id, "tabela" é null e a exportação quebra.
-
-    // raw: true mantém horários como "08:00" em vez de o Excel converter
-    const planilha = XLSX.utils.table_to_sheet(tabela, { raw: true });
-    // table_to_sheet lê a tabela HTML e copia para uma planilha.
-
-    // Largura das colunas (ajuste a quantidade conforme suas colunas)
-    planilha["!cols"] = [{ wch: 12 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 12 }];
-    // wch = largura em quantidade de caracteres
-
-    const livro = XLSX.utils.book_new();                          // cria o arquivo Excel
-    XLSX.utils.book_append_sheet(livro, planilha, "Espelho de Ponto"); // adiciona a aba
-
-    const hoje = new Date().toISOString().slice(0, 10);
-    // data de hoje no formato "2026-10-15" (usada no nome do arquivo)
-    XLSX.writeFile(livro, `espelho-de-ponto-${hoje}.xlsx`);
-    // gera o arquivo e inicia o download
-});
