@@ -20,14 +20,11 @@
 
 /* CORPO DA PÁGINA */
 body {
-  min-height: 100vh;       /* altura mínima = 100% da altura da tela */
-  display: flex;           /* ativa o modo flexbox para alinhar o conteúdo */
-  justify-content: center; /* centraliza o cartão na horizontal */
-  align-items: center;     /* centraliza o cartão na vertical */
-  padding: 24px 16px;      /* 24px em cima/embaixo, 16px nas laterais */
-  background: var(--bg);   /* usa a cor de fundo definida nas variáveis */
-  color: var(--text);      /* cor padrão dos textos */
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* usa a fonte do próprio sistema (Windows, Mac, Android...). Se uma não existir, tenta a próxima */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 100px 16px 24px;
 }
 
 /* Cabeçalho da página */
@@ -203,6 +200,11 @@ header {
   /* 8px entre cada registro */
   margin: 0;    /* tira a margem padrão da lista */
   padding: 0;   /* tira o recuo de 40px da esquerda, que era o problema */
+}
+
+.log__list {
+    max-height: 220px;
+    overflow-y: auto;
 }
 
 /* Cada registro da lista (<li>), ex: "Entrada   08:00:00" */
