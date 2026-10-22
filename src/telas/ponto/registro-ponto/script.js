@@ -38,7 +38,7 @@ function pegarHoraAtual() {
 
     // junta tudo separado por dois pontos
     return `${horas}:${minutos}:${segundos}`;
-   
+
 }
 
 function atualizarRelogio() {
@@ -106,7 +106,7 @@ async function registrarPonto() {
 
     if (resposta.data.status != 1)
         throw new Error('Erro ao registrar ponto: ' + resposta.message);
-    
+
 
     if (totalRegistros >= tiposDePonto.length) {
         statusEl.textContent = 'Você já registrou todos os pontos de hoje.';
@@ -115,7 +115,7 @@ async function registrarPonto() {
 
     // descobre qual é o tipo desse ponto usando o contador como posição na lista
     // (posição 0 = Entrada, 1 = Saída almoço...)
-const tipo = resposta.data.tipo;
+    const tipo = resposta.data.tipo;
 
     // pega a hora exata do clique
     const hora = pegarHoraAtual();
@@ -147,7 +147,51 @@ const tipo = resposta.data.tipo;
     if (totalRegistros === tiposDePonto.length) {
         btnExportar.disabled = true;
     }
-  
+
+}
+// O "async" avisa que essa função vai ter que esperar coisas da internet chegarem
+async function carregarRegistrosDeHoje() {
+
+    // Vai lá no servidor pegar os pontos batidos hoje pelo estagiário (userCode=0)
+    // O await faz o código esperar a resposta chegar antes de continuar
+    // O .json() converte o texto que veio da internet em dados que o JS entende
+    const resposta = await fetch("http://localhost:3000/registroPontoEstag/registros-hoje?userCode=0")
+        .then((response) => response.json());
+
+    // Mostra no console do navegador só pra gente ver se deu certo e o que veio
+    console.log('Registros de hoje:', resposta.data.registros);
+
+    // Guarda só a lista de registros numa variável com nome mais curto pra não ficar digitando "resposta.data..."
+    const registros = resposta.data.registros;
+
+    // Passa de um por um na lista de pontos para colocar na tela
+    registros.forEach(r => {
+        // Cria uma linha de lista novinha (tag <li>)
+        const item = document.createElement('li');
+
+        // Pega a data feia do banco e transforma só na hora bonitinha (tipo "14:35:10") no padrão brasileiro
+        const hora = new Date(r.dataHora).toLocaleTimeString('pt-BR');
+
+        // Coloca o tipo do ponto (ex: entrada, almoço) e o horário dentro do item
+        item.innerHTML = `<span>${r.tipo}</span><span>${hora}</span>`;
+
+        // Joga esse item lá no topo da lista na tela (o mais novo fica em cima)
+        logList.prepend(item);
+    });
+
+    // Se veio pelo menos um registro, esconde aquela mensagem de "nenhum ponto registrado"
+    if (registros.length > 0) {
+        empty.hidden = true;
+    }
+
+    // Guarda quantos pontos foram batidos hoje
+    totalRegistros = registros.length;
+
+    // Se a pessoa já bateu todos os pontos possíveis do dia (entrada, almoço, volta, saída),
+    // desativa o botão pra ela não conseguir fazer mais nada
+    if (totalRegistros >= tiposDePonto.length) {
+        btnExportar.disabled = true;
+    }
 }
 
 // LIGAR OS EVENTOS
@@ -163,3 +207,4 @@ atualizarData();
 // setInterval repete a função a cada 1000 milissegundos (1 segundo)
 // é isso que faz o relógio andar
 setInterval(atualizarRelogio, 1000);
+carregarRegistrosDeHoje();

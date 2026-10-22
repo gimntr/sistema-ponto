@@ -1,3 +1,6 @@
+const fs = require('fs'); //é o módulo do Node que lê e escreve arquivos no computador.
+const path = require('path'); //ajuda a montar o caminho de um arquivo sem erro.
+
 // importo o cors, que deixa a tela (front) conversar com o servidor
 // mesmo estando em endereços diferentes
 const cors = require('cors');
@@ -18,6 +21,19 @@ app.use(express.json());
 // lista vazia onde eu vou guardar cada batida de ponto
 // fica na memória, então se o servidor reiniciar ela zera
 const registros = [];
+
+// monto o caminho completo do arquivo onde vou guardar as batidas
+// __dirname é a pasta onde o server.js está, então o arquivo
+// sempre vai ser criado dentro de ponto-backend
+// path.join junta a pasta com o nome do arquivo sem eu me preocupar com as barras
+const arquivoRegistros = path.join(__dirname, 'registros.json');
+
+
+// função que salva a lista de batidas no arquivo
+// ela só roda quando eu chamar salvarRegistros() lá na rota
+function salvarRegistros() {
+  fs.writeFileSync(arquivoRegistros, JSON.stringify(registros, null, 2));
+}
 
 //O servidor decide qual é a batida
 const tiposDePonto = ['Entrada', 'Saída almoço', 'Retorno almoço', 'Saída'];
