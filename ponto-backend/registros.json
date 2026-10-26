@@ -18,5 +18,45 @@
     "userCode": "0",
     "tipo": "Saída",
     "dataHora": "2026-10-22T17:45:45.150Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Entrada",
+    "dataHora": "2026-10-23T16:41:41.437Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Saída almoço",
+    "dataHora": "2026-10-23T16:41:41.468Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Retorno almoço",
+    "dataHora": "2026-10-23T16:41:41.475Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Saída",
+    "dataHora": "2026-10-23T16:41:41.479Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Entrada",
+    "dataHora": "2026-10-26T11:51:02.038Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Saída almoço",
+    "dataHora": "2026-10-26T11:51:02.214Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Retorno almoço",
+    "dataHora": "2026-10-26T17:04:49.832Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Saída",
+    "dataHora": "2026-10-26T17:04:49.853Z"
   }
 ]

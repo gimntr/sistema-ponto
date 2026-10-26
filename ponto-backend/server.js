@@ -165,6 +165,30 @@ app.get('/registroPontoEstag/registros-hoje', (req, res) => {
     });
 });
 
+// Cria um endereço novo no SEU servidor: POST http://localhost:3000/login
+// "async" é necessário porque dentro dela usamos "await" (esperar uma resposta)
+app.post("/login", async (req, res) => {
+  // Pega usuário e senha que a tela enviou no corpo (body) do pedido
+  const { username, password } = req.body;
+
+  // Chama a API do ERP, igual ao teste-login.js, mas agora com os dados que vieram da tela
+  const resposta = await fetch(
+    "https://helpdesk.medsystems.com.br:3000/registroPontoEstag/login",
+    {
+      method: "POST", // a documentação da API pede POST
+      // A API espera formData (formato de formulário), por isso URLSearchParams
+      body: new URLSearchParams({ username, password }),
+    }
+  );
+
+  // Converte a resposta da API (texto JSON) em um objeto que o JavaScript entende
+  const dados = await resposta.json();
+
+  // Responde para a tela com APENAS o userCode.
+  // O bearer e o JSONID ficam de fora de propósito, para não irem ao navegador.
+  res.json({ userCode: dados.userCode });
+});
+
 // liga o servidor na porta 3000 e avisa no terminal
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
