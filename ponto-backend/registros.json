@@ -58,5 +58,15 @@
     "userCode": "0",
     "tipo": "Saída",
     "dataHora": "2026-10-26T17:04:49.853Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Entrada",
+    "dataHora": "2026-10-27T12:17:22.688Z"
+  },
+  {
+    "userCode": "0",
+    "tipo": "Saída almoço",
+    "dataHora": "2026-10-27T12:58:34.221Z"
   }
 ]
