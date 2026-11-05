@@ -21,9 +21,8 @@ app.use(cors());
 // (tem que ficar antes das rotas, senão o req.body vem vazio)
 app.use(express.json());
 
-// aqui eu pego a lista de batidas que estava guardada no arquivo
-// quando o servidor liga, ele chama a função carregarRegistros (que está mais embaixo)
-// se não tiver arquivo ainda, a lista começa vazia
+// quando o servidor liga, ele lê o arquivo e pega a lista de batidas que estava guardada
+// (a função carregarRegistros está mais embaixo)
 const registros = carregarRegistros();
 
 // monto o caminho completo do arquivo onde vou guardar as batidas
@@ -123,25 +122,28 @@ app.get('/registros', (req, res) => {
 // rota que a tela chama quando abre, pra mostrar as batidas de hoje
 app.get('/registroPontoEstag/registros-hoje', (req, res) => {
 
+    // pego o dia de hoje
     const hoje = new Date().toDateString();
 
+    // separo só as batidas desse usuário que são de hoje
     const registrosDeHoje = registros.filter(r =>
         r.userCode === req.query.userCode && r.dataHora.toDateString() === hoje
     );
 
+    // devolvo a lista pra tela
     res.json({
         data: { status: 1, registros: registrosDeHoje },
         message: 'ok'
     });
 });
 
-// rota de login: POST http://localhost:3000/login
-app.post("/login", async (req, res) => {
+// rota de login: responde nos dois endereços (/login e /registroPontoEstag/login)
+app.post(["/login", "/registroPontoEstag/login"], async (req, res) => {
     try {
-        // pega o usuário e a senha que o teste mandou
+        // pego o usuário e a senha que a tela mandou
         const { username, password } = req.body;
 
-        // o carteiro vai até o ERP levando o pacotinho
+        // o carteiro vai até o ERP levando o usuário e a senha
         const resposta = await fetch(
             "https://helpdesk.medsystems.com.br:3000/registroPontoEstag/login",
             {
@@ -150,16 +152,54 @@ app.post("/login", async (req, res) => {
             }
         );
 
-        // abre a caixinha que o ERP devolveu
+        // abro o pacote que o ERP devolveu
         const dados = await resposta.json();
 
-        // devolve só o userCode, sem o resto
-        res.json({ userCode: dados.userCode });
+        // falo em voz alta no terminal tudo que o ERP respondeu
+        // (é aqui que eu vou descobrir onde está o crachá/token)
+        console.log("Resposta do ERP:", dados);
+
+        // entrego o pacote INTEIRO pra tela (antes eu entregava só o userCode)
+        res.json(dados);
+
     } catch (erro) {
-        // se qualquer coisa de cima falhar, cai aqui (o colchão)
+        // se qualquer coisa lá de cima falhar, cai aqui
         console.log("Erro no login:", erro.message);
         console.log("Causa:", erro.cause);
         res.status(500).json({ message: "Não foi possível fazer login" });
+    }
+});
+
+// rota de consulta: a tela pede as batidas de uma pessoa num período
+app.get("/consulta", async (req, res) => {
+    try {
+        // pego o crachá que a tela mandou pendurado no envelope (header)
+        const token = req.headers.authorization;
+
+        // pego as três perguntas que a tela mandou: quem, desde quando e até quando
+        const { userCode, dataInicio, dataFim } = req.query;
+
+        // arrumo as três perguntas no formato de endereço
+        const parametros = new URLSearchParams({ userCode, dataInicio, dataFim });
+
+        // junto o endereço do ERP com as perguntas
+        const url = "https://helpdesk.medsystems.com.br:3000/registroPontoEstag/espelho-ponto?" + parametros;
+
+        // o carteiro vai até o ERP levando o crachá
+        const resposta = await fetch(url, {
+            headers: { authorization: token },
+        });
+
+        // abro o pacote que o ERP devolveu
+        const dados = await resposta.json();
+
+        // entrego o pacote pra tela
+        res.json(dados);
+
+    } catch (erro) {
+        // se der qualquer problema, aviso no terminal e na tela
+        console.log("Erro na consulta:", erro.message);
+        res.status(500).json({ message: "Não foi possível consultar" });
     }
 });
 

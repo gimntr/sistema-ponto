@@ -149,9 +149,12 @@ async function registrarPonto() {
     }
 
 }
+async function consultarEspelhoDePonto() {
+
 // O "async" avisa que essa função vai ter que esperar coisas da internet chegarem
 async function carregarRegistrosDeHoje() {
-
+    const token = localStorage.getItem('token');
+    
     // Vai lá no servidor pegar os pontos batidos hoje pelo estagiário (userCode=0)
     // O await faz o código esperar a resposta chegar antes de continuar
     // O .json() converte o texto que veio da internet em dados que o JS entende
