@@ -51,7 +51,7 @@ function atualizarRelogio() {
     // aqui uso innerHTML (e não textContent) porque quero manter
     // o <span class="colon"> nos dois pontos, senão perde o estilo do CSS
     clock.innerHTML = `${horas}<span class="colon">:</span>${minutos}<span class="colon">:</span>${segundos}`;
-    // 💡 Dica: essas 3 primeiras linhas repetem o que pegarHoraAtual() já faz.
+    // Essas 3 primeiras linhas repetem o que pegarHoraAtual() já faz.
     // Não é erro, só código repetido.
 }
 
@@ -67,7 +67,7 @@ function atualizarData() {
         month: 'long',    // nome do mês
         year: 'numeric'   // ano
     });
-    // 💡 O "capitalize" do CSS põe maiúscula em TODA palavra, então pode
+    //  O "capitalize" do CSS põe maiúscula em TODA palavra, então pode
     // sair "8 De Outubro De 2026". Se incomodar, deixe o texto como está
     // ou ponha maiúscula só na primeira letra pelo JavaScript.
 }
@@ -149,11 +149,11 @@ async function registrarPonto() {
     }
 
 }
-async function consultarEspelhoDePonto() {
-
-// O "async" avisa que essa função vai ter que esperar coisas da internet chegarem
 async function carregarRegistrosDeHoje() {
     const token = localStorage.getItem('token');
+    const userCode = localStorage.getItem('userCode');
+    new Date().toLocaleDateString('pt-BR');
+    console.log(`Meu código é ${userCode}`);
     
     // Vai lá no servidor pegar os pontos batidos hoje pelo estagiário (userCode=0)
     // O await faz o código esperar a resposta chegar antes de continuar
@@ -206,8 +206,8 @@ btnExportar.addEventListener('click', registrarPonto);
 // senão ficaria "00:00:00" e "carregando data..." por 1 segundo
 atualizarRelogio();
 atualizarData();
+carregarRegistrosDeHoje();
 
 // setInterval repete a função a cada 1000 milissegundos (1 segundo)
 // é isso que faz o relógio andar
 setInterval(atualizarRelogio, 1000);
-carregarRegistrosDeHoje();

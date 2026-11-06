@@ -3,10 +3,10 @@ async function testarConsulta() {
 
     // Faz a requisição pro backend que tá rodando na minha própria máquina (localhost) na porta 3000
     // Passa os parâmetros na URL: o usuário e o período de datas de outubro
-    const resposta = await fetch("http://localhost:3000/consulta?userCode=giovanna.bispo&dataInicio=01/10/2026&dataFim=28/10/2026", {
+    const resposta = await fetch("http://localhost:3000/consulta?userCode=1495&dataInicio=01/10/2026&dataFim=28/10/2026", {
         headers: { 
             // Cabeçalho de autorização: tem que colar o token/crachá de verdade aqui senão vai dar erro 401
-            authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJTVVAiLCJpYXQiOjE3OTM4Nzk5MDMsImV4cCI6MTc5Mzk2NjMwM30.Wq1AVWKNNZg6iCS9p1O5Se-dwXAj0MWIlLBFcdaaO1U" 
+            authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJnaW92YW5uYS5tb250ZWlybyIsImlhdCI6MTc5Mzk3NTMxMSwiZXhwIjoxNzk0MDYxNzExfQ.cBrf-VqHrp569-w3rdOTcbArwcg0c2LfcoybdEk4OUg" 
         }
     });
 
